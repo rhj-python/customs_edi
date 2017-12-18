@@ -1,0 +1,88 @@
+{% extends 'customs/customs_base.html' %}
+{% from 'common/common_macro.html' import declaration_status %}
+
+{% block title %}
+    进口报关单审核
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block main_content %}
+    <div class="main">
+        <div class="top">
+            <div class="form-group filter_style">
+                <div class="input-group">
+                    <span class="input-group-addon filter_btn_style">过滤</span>
+                    <select name="filter" class="form-control">
+                        <option value="0" {% if current_filter_id==0 %}selected{% endif %}>全部</option>
+                        {% for status in declaration_statuses %}
+                            {% if status.id!=1 %}
+                                <option value="{{ status.id }}" {% if current_filter_id==status.id %}selected{% endif %}>{{ status.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group sort_style">
+                <div class="input-group">
+                    <span class="input-group-addon sort_btn_style">排序</span>
+                    <select name="sort" class="form-control">
+                        <option value="5" {% if current_sort_id==5 %}selected{% endif %}>按申报日期</option>
+                        <option value="4" {% if current_sort_id==4 %}selected{% endif %}>按进口口岸</option>
+                        <option value="6" {% if current_sort_id==6 %}selected{% endif %}>按贸易方式</option>
+                        <option value="7" {% if current_sort_id==7 %}selected{% endif %}>按征免性质</option>
+                    </select>
+                    <div class="input-group-btn">
+                        {% if current_asc_id==1 %}
+                            <button name="asc" class="btn btn-primary" data_code="1" want_code="2" id="asc_btn">顺序</button>
+                        {% else %}
+                            <button name="asc" class="btn btn-warning" data_code="2"  want_code="1" id="asc_btn">逆序</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <form action="">
+                <div class="form-group search_style">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="报关单编号 申报日期">
+                        <div class="input-group-btn">
+                            <button class="btn btn-success" id="search_btn">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>报关单编号</th>
+                    <th>申报日期</th>
+                    <th>
+                        {% block port %}
+
+                        {% endblock %}
+                    </th>
+                    <th>贸易方式</th>
+                    <th>征免性质</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% block tbody %}
+
+                {% endblock %}
+
+            </tbody>
+        </table>
+    </div>
+    {% block footer %}
+
+    {% endblock %}
+{% endblock %}

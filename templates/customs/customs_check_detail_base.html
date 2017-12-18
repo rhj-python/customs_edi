@@ -1,0 +1,185 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    进口报关单明细
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('common/css/common_check_detail_base.css') }}">
+    <script src="{{ static('common/jquery.media.js') }}"></script>
+    <script src="{{ static('common/js/common_jquery_media_plugin.js') }}"></script>
+
+{% endblock %}
+
+{% block main_content %}
+    <div class="main">
+        <div class="panel panel-primary">
+            <div class="panel-heading">进口报关单</div>
+            <div class="panel-body">
+                <table class="table table-bordered table-striped declaration_table">
+                    <tr>
+                        <td>报关单号</td>
+                        <td colspan="3">{{ declaration.declaration_code }}</td>
+                        <td>预录入号</td>
+                        <td colspan="3">{{ declaration.pre_entry_code }}</td>
+
+
+                    </tr>
+                    <tr>
+                        <td>{% block port_key %}进口口岸{% endblock %}</td>
+                        <td>{{ declaration.import_port or declaration.export_port }}</td>
+                        <td>备案号</td>
+                        <td>{{ declaration.case_code }}</td>
+                        <td>{% block date_key %}进口日期{% endblock %}</td>
+                        <td>{{ declaration.import_date or declaration.export_date }}</td>
+                        <td>申报日期</td>
+                        <td>{{ declaration.customs_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>经营单位</td>
+                        <td>{{ declaration.business_company.company_name }}</td>
+                        <td>运输方式</td>
+                        <td>{{ declaration.transport_mode.name }}</td>
+                        <td>运输工具名称/航次</td>
+                        <td>{{ declaration.vessel_name }} {{ declaration.vessel_code }}</td>
+                        <td>提运单号</td>
+                        <td>{{ declaration.bl_code }}</td>
+                    </tr>
+                    <tr>
+                        <td>收货单位</td>
+                        <td>{{ declaration.consignee }}</td>
+                        <td>贸易方式</td>
+                        <td>{{ declaration.trade_mode.name }}</td>
+                        <td>征免性质</td>
+                        <td>{{ declaration.tax_mode.name }}</td>
+                        <td>{% block rate_or_settlement_key %}征税比例{% endblock %}</td>
+                        <td>{% block rate_or_settlement_value %}{{ declaration.tax_rate }}{% endblock %}</td>
+                    </tr>
+                    <tr>
+                        <td>许可证号</td>
+                        <td>{{ declaration.license_code }}</td>
+                        <td>{% block country_key %}起运国{% endblock %}</td>
+                        <td>{{ declaration.departure_country or declaration.destination_country }}</td>
+                        <td>{% block d_port_key %}装货港{% endblock %}</td>
+                        <td>{{ declaration.loading_port or declaration.destination_port }}</td>
+                        <td>{% block domestic_key %}境内目的地{% endblock %}</td>
+                        <td>{{ declaration.domestic_destination or declaration.goods_origin_place }}</td>
+                    </tr>
+                    <tr>
+                        <td>批准文号</td>
+                        <td>{{ declaration.approval_code }}</td>
+                        <td>成交方式</td>
+                        <td>{{ declaration.transaction_mode.name }}</td>
+                        <td>运费</td>
+                        <td>{{ declaration.freight }}</td>
+                        <td>保费</td>
+                        <td>{{ declaration.insurance_premiums }}</td>
+                    </tr>
+                    <tr>
+                        <td>杂费</td>
+                        <td>{{ declaration.sundry_charges }}</td>
+                        <td>合同协议好</td>
+                        <td>{{ declaration.contract_code }}</td>
+                        <td>件数</td>
+                        <td>{{ declaration.packages_num }}</td>
+                        <td>包装种类</td>
+                        <td>{{ declaration.packing_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>毛重(kg)</td>
+                        <td>{{ declaration.gross_weight }}</td>
+                        <td>净重(kg)</td>
+                        <td>{{ declaration.net_weight }}</td>
+                        <td>集装箱号</td>
+                        <td colspan="3">{{ declaration.container_code }}</td>
+                    </tr>
+                    <tr>
+                        <td>随附单据</td>
+                        <td colspan="3">
+                            {% for document in declaration.documents %}
+                                <span>{{ document.document_type.name }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{% block use_or_manufacturer_key %}用途{% endblock %}</td>
+                        <td colspan="3">{% block use_or_manufacturer_value %}{{ declaration.use.name }}{% endblock %}</td>
+
+                    </tr>
+                    <tr>
+                        <td>标记唛码及备注</td>
+                        <td colspan="7">{{ declaration.marks }}</td>
+                    </tr>
+
+                </table>
+                <table class="table table-bordered table-striped commodity_table">
+                    <thead>
+                        <tr>
+                            <th>商品编码</th>
+                            <th>商品名称</th>
+                            <th>规格型号</th>
+                            <th>数量及单位</th>
+                            <th>{% block commdoity_country %}原产国(地区){% endblock %}</th>
+                            <th>单价</th>
+                            <th>总价</th>
+                            <th>币制</th>
+                            <th>征免</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for commodity in declaration.commoditys  %}
+                            <tr>
+                                <td>{{ commodity.hs_code }}</td>
+                                <td>{{ commodity.commodity_name }}</td>
+                                <td>{{ commodity.commodity_type }}</td>
+                                <td>{{ commodity.quantity_and_unit }}</td>
+                                <td>{{ commodity.country }}</td>
+                                <td>{{ commodity.unit_price }}</td>
+                                <td>{{ commodity.total_price }}</td>
+                                <td>{{ commodity.currency.name }}</td>
+                                <td>{{ commodity.tax_free_mode.name}}</td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">随附单据</div>
+            <div class="panel-body">
+                {% for document in declaration.documents %}
+                    <div class="doc">
+                        <a href="{{ document.url }}" class="media_doc doc_style"></a>
+                        <div class="doc_name">{{ document.document_type.name }}</div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+        <div class="form-group form_style">
+            {% if declaration.status.id==2 %}
+                <button class="btn btn-info" id="collect_tax_btn" data_declaration_model="{{ declaration.__class__.__name__ }}" data_declaration_uuid="{{ declaration.uuid }}">征税</button>
+                <button class="btn btn-warning" id="check_btn" data_declaration_model="{{ declaration.__class__.__name__ }}" data_declaration_uuid="{{ declaration.uuid }}">查验</button>
+                <button class="btn btn-danger" id="cancel_btn">退单</button>
+            {% elif declaration.status.id==3 %}
+                <button class="btn btn-success" id="success_btn" data_declaration_model="{{ declaration.__class__.__name__ }}" data_declaration_uuid="{{ declaration.uuid }}">查验通过</button>
+                <button class="btn btn-danger" id="cancel_btn">退单</button>
+            {% endif %}
+        </div>
+        <div id="refund_div">
+            <br>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">退单原因</span>
+                    <textarea name="refund_reason" class="form-control" placeholder="内容不超过200字符"></textarea>
+                </div>
+            </div>
+            <div class="form-group form_right">
+                <button class="btn btn-danger" id="refund_btn" data_declaration_model="{{ declaration.__class__.__name__ }}" data_declaration_uuid="{{ declaration.uuid }}">进行退单</button>
+            </div>
+            </div>
+        </div>
+{% endblock %}

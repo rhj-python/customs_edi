@@ -1,0 +1,65 @@
+{% extends 'customs/customs_declaration_base.html' %}
+
+{% block head %}
+    {{ super() }}
+    <script src="{{ static('customs/js/customs_edit_import_declaration.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+    编辑进口报关单
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+
+{% block port_group %}
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">进口口岸</span>
+            <input type="text" class="form-control" name="import_port" placeholder="必填" value="{{ declaration.import_port }}">
+        </div>
+    </div>
+        <div class="form-group form_style">
+            <div class="input-group input_style">
+                <span class="input-group-addon">进口日期</span>
+                <input type="date" class="form-control" name="import_date" value="{{ declaration.import_date }}" placeholder="必填">
+            </div>
+        </div>
+        <div class="form-group form_style">
+            <div class="input-group input_style">
+                <span class="input-group-addon">起运国</span>
+                <input type="text" class="form-control" name="departure_country" value="{{ declaration.departure_country }}" placeholder="必填">
+            </div>
+        </div>
+        <div class="form-group form_style">
+            <div class="input-group input_style">
+                <span class="input-group-addon">装货港</span>
+                <input type="text" class="form-control" name="loading_port" value="{{ declaration.loading_port }}" placeholder="必填">
+            </div>
+        </div>
+        <div class="form-group form_style">
+            <div class="input-group input_style">
+                <span class="input-group-addon">境内目的地</span>
+                <input type="text" class="form-control" name="domestic_destination" value="{{ declaration.domestic_destination }}" placeholder="必填">
+            </div>
+        </div>
+        <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">用途</span>
+            <select name="use" class="form-control">
+                {% for use in uses %}
+                    <option value="{{ use.id }}" {% if use==declaration.use %}selected{% endif %}>{{ use.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+{% endblock %}
+
+{% block btn_group %}
+    <button class="btn btn-info" id="save_btn" data_declaration_uuid="{{ declaration.uuid }}">保存</button>
+    <button class="btn btn-primary" id="submit_btn" data_declaration_uuid="{{ declaration.uuid }}">保存并申报</button>
+    <a href="{{ url_for('customs.customs_import_declaration',page=1,filter_id=0,sort_id=1,asc_id=1) }}" class="btn btn-default" id="cancel_btn">取消</a>
+{% endblock %}
+

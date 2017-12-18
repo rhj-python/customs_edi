@@ -1,0 +1,64 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    新增权限
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <script src="{{ static('manage/js/manage_add_permission.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <form action="" class="form form_large" method="post">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">权限名称</span>
+                <input type="text" class="form-control" name="name" placeholder="请输入英文的权限名称 如 customs_view">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">权限描述</span>
+                <input type="text" class="form-control" name="desc" placeholder="请输入中文的权限描述 如 报关功能的视图函数">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">权限代码</span>
+                <input type="text" class="form-control" name="p_code" placeholder="请输入英文的权限代码 如 customs_view">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">显示页面的权限</span>
+                <div class="form-control checkbox_div">
+                    {% for handler in handlers %}
+                        <label for="" class="checkbox-inline">
+                            <input type="checkbox" name="handlers" value="{{ handler.id }}">{{ handler.desc }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">显示菜单与页面元素的权限</span>
+                <div class="form-control checkbox_div">
+                    {% for menu in menus %}
+                        <label for="" class="checkbox-inline">
+                            <input type="checkbox" name="menus" value="{{ menu.id }}">{{ menu.desc }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary add_btn">立即新增</button>
+            <a class="btn btn-default" href="{{ url_for('customs.manage_permission_manage') }}">返回</a>
+        </div>
+    </form>
+{% endblock %}

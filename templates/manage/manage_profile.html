@@ -1,0 +1,30 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    个人信息
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block main_content %}
+    <table class="table table-bordered">
+        <tr>
+            <td>用户名</td>
+            <td>{{ employee.username }}</td>
+            <td>邮箱</td>
+            <td>{{ employee.email }}</td>
+        </tr>
+        <tr>
+            <td>创建时间</td>
+            <td>{{ employee.create_time }}</td>
+            <td>所属公司</td>
+            <td>{{ employee.company.company_name }}</td>
+        </tr>
+    </table>
+{% endblock %}

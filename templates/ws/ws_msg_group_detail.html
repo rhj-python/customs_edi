@@ -1,0 +1,19 @@
+{% extends 'ws/ws_msg_single_detail.html' %}
+
+{% block title %}
+    {% if group_name=='Employee' %}
+        企业内部群
+    {% elif group_name=='Customs_User' %}
+        海关群
+    {% else %}
+        客户群
+    {% endif %}
+{% endblock %}
+
+{% block head_add %}
+    <script src="{{ static('ws/js/ws_msg_group_detail.js') }}"></script>
+{% endblock %}
+
+{% block receiver_info %}
+    <div id="receiver_info" style="display: none" data_id="none" data_model="{{ group_name }}"></div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'customs/customs_check_detail_base.html' %}
+
+{% block title %}
+    出口报关单明细
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <script src="{{ static('customs/js/customs_export_check_detail.js') }}"></script>
+{% endblock %}
+
+{% block port_key %}
+    出口口岸
+{% endblock %}
+
+{% block date_key %}
+    出口日期
+{% endblock %}
+
+{% block rate_or_settlement_key %}
+    结汇方式
+{% endblock %}
+
+{% block domestic_key %}
+    境内货源地
+{% endblock %}
+
+{% block country_key %}
+    运抵国
+{% endblock %}
+
+{% block d_port_key %}
+    目的港
+{% endblock %}
+
+{% block rate_or_settlement_value %}
+    {{ declaration.settlement_mode.name }}
+{% endblock %}
+
+{% block use_or_manufacturer_key %}
+    生产厂家
+{% endblock %}
+
+{% block use_or_manufacturer_value %}
+    {{ declaration.manufacturer }}
+{% endblock %}
+
+{% block commdoity_country %}
+    最终目的国(地区)
+{% endblock %}

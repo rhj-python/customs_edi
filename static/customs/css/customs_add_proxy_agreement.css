@@ -1,0 +1,33 @@
+.main_content{
+    padding-right:0;
+}
+
+.input_style{
+    width:100%;
+}
+
+.agreement_style{
+    width:120px;
+}
+
+.panel_left,.panel_right{
+    display: inline-block;
+    width:49%;
+}
+
+#agreement_toggle{
+    width:100%;
+}
+
+.panel_left{
+    margin-right: 8px;
+}
+
+.panel_right{
+    height:689px;
+    vertical-align: top;
+}
+
+.middle_btn{
+    text-align: center;
+}

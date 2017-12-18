@@ -1,0 +1,16 @@
+.table>tbody>tr>td{
+    vertical-align: middle;
+}
+
+.checkbox label{
+    padding-left:50px;
+    width:16%;
+    margin-bottom: 14px;
+}
+
+label.agree_label{
+    width:200px;
+    padding-top: 10px;
+    padding-left:20px;
+}
+

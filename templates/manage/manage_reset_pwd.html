@@ -1,0 +1,39 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    修改密码
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <script src="{{ static('manage/js/manage_reset_pwd.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <form action="" class="form form_middle" method="post">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">旧密码</span>
+                <input type="password" name="old_password" class="form-control" placeholder="请输入旧密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">新密码</span>
+                <input type="password" name="new_password" class="form-control" placeholder="请输入新密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">确认新密码</span>
+                <input type="password" name="new_password_repeat" class="form-control" placeholder="请再次输入新密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" id="reset_pwd_btn">立即修改</button>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    签约新关区
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('customs/css/customs_add_triple_agreement.css') }}">
+    <script src="{{ static('customs/js/customs_add_triple_agreement.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="main_middle">
+        <form action="" class="form" method="post">
+            <div class="panel panel-primary">
+                <div class="panel-heading">企业信息</div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-success">
+                        <tr>
+                            <td>企业名称</td>
+                            <td>
+                                <input type="text" class="form-control" readonly value="{{ employee.company.company_name }}">
+                            </td>
+                            <td>海关注册号</td>
+                            <td>
+                                 <input type="text" class="form-control" readonly value="{{ employee.company.customs_registration_code }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>签署人</td>
+                            <td>
+                                <input type="text" class="form-control" readonly value="{{ employee.company.legal_name }}">
+                            </td>
+                            <td>当前时期</td>
+                            <td>
+                                <input type="text" class="form-control" readonly value="{{ now|date }}">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-primary zone_list">
+                <div class="panel-heading">请选择要签约的关区</div>
+                <div class="panel-body">
+                    <div class="checkbox">
+                        {% for zone in show_zones  %}
+                            <label for="">
+                                <input type="checkbox" name="zones" value="{{ zone.id }}">{{ zone.name }}
+                            </label>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label class="agree_label" for="">
+                    <input type="checkbox" name="agree" value="1" checked>同意
+                    <a class="agree_a" href="">三方协议条款</a>
+                </label>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-info" id="submit_btn" data_company_uuid="{{ employee.company.uuid }}">立即签约</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

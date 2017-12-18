@@ -1,0 +1,262 @@
+html{
+    width:1920px;
+}
+
+.wrapper{
+    width:100%;
+    min-height:900px;
+    /*padding-top: 50px;*/
+}
+
+.glyphicon{
+    top:0;
+}
+
+.top_nav{
+    overflow: hidden;
+}
+
+.top_nav>.navbar{
+    margin-bottom: 0;
+    width:100%;
+    overflow: hidden;
+}
+
+.left_nav{
+    float:left;
+    width:240px;
+    min-height:900px;
+    background:#44B78B;
+    padding-top:30px;
+
+}
+
+.navbar_green{
+    background:#0C4B33;
+    color:#fff;
+    overflow: hidden;
+}
+
+
+.navbar_green .navbar-nav>li>a {
+   color:#fff;
+}
+
+.navbar_green .navbar-header .navbar-brand{
+    color:#fff;
+}
+
+.left_nav a:visited{
+    color: #fff;
+}
+
+.navbar_green a:hover{
+    background-color:#C9F0DD;
+}
+
+
+
+.green_pills{
+    padding-top:4px;
+}
+
+.green_pills>li>button{
+    width: 100%;
+    background:transparent;
+    border:none;
+    padding:4px 10px;
+    color:#eee;
+    outline: none;
+}
+
+.gly{
+    float:right;
+
+}
+
+.unfold{
+    display: none;
+    background:#47c89e;
+}
+
+.green_pills>li{
+    font-size:16px;
+
+}
+
+.green_pills li{
+    padding-top:4px;
+}
+
+.green_pills li>a{
+    color:#fff;
+    padding: 4px;
+    display: block;
+    text-align: center;
+}
+
+.green_pills li>a:hover{
+    color:#44B78B;
+    background:#eee;
+    text-decoration: none;
+}
+
+
+.green_pills .g_active>a{
+    color:#44B78B;
+    background:#fff;
+}
+
+.li_title{
+    color:#fff;
+}
+
+.green_btn:hover{
+    background:#eee;
+    color:#44B78B;
+}
+
+h1{
+    margin-bottom: 40px;
+}
+
+.main_content{
+    display: inline-block;
+
+    min-height:600px;
+    width: 1200px;
+    padding:20px 40px 40px 40px;
+    /*border:1px solid skyblue;*/
+}
+
+.top{
+    background:#eee;
+    padding:4px;
+    text-align: right;
+    overflow: hidden;
+}
+
+.main_table{
+    width:600px;
+}
+
+.main_middle{
+    width:800px;
+}
+
+.form_middle{
+    width: 400px;
+}
+
+.form_large{
+    width:600px;
+}
+
+.form_min{
+    width:240px;
+}
+
+.left{
+    float:left;
+}
+
+.right{
+    float:right;
+}
+
+.filter_style,.sort_style{
+    display: inline-block;
+    float:left;
+    min-width:40%;
+    max-width: 300px;
+}
+
+.filter_btn_style{
+    background-color:#f0ad4e;
+    color:#fff;
+}
+
+.sort_btn_style{
+    background-color:#d9534f;
+    color:#fff;
+}
+
+.search_style{
+    display: inline-block;
+    float:left;
+    min-width:60%;
+    max-width: 400px;
+}
+
+
+.pag{
+    text-align: center;
+}
+
+.checkbox_div{
+    height:100%;
+}
+
+.checkbox-inline{
+    margin-left: 10px;
+}
+
+.checkbox-inline+.checkbox-inline, .radio-inline+.radio-inline{
+    margin-left: 10px;
+}
+
+.mes{
+    width:50px;
+    height:50px;
+    display: inline-block;
+    text-align:center;
+    background-color: #eee;
+    position: fixed;
+    bottom:10px;
+    right:10px;
+}
+
+.message{
+    font-size: 20px;
+    color:#6f5499;
+    line-height: 50px;
+}
+
+.mes:hover{
+    background-color:#6f5499;
+    cursor:pointer;
+}
+
+.mes:hover .message{
+    color:#fff;
+}
+
+.mes_list{
+    width:400px;
+    position: fixed;
+    bottom:70px;
+    right:10px;
+    display: none;
+    max-height:600px;
+    overflow: scroll;
+}
+
+.mes_plus{
+    vertical-align: middle;
+    float:right;
+}
+
+
+
+.content{
+    height:100%;
+    overflow: auto;
+    border:none;
+}
+
+
+.form_mes{
+    margin-top: 10px;
+    text-align: right;
+}
+

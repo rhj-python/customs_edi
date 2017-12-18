@@ -1,0 +1,115 @@
+{% from 'common/common_macro.html' import static %}
+
+
+{% macro user_list(title,user_list,g_user,color_class,online_set) %}
+    <div class="panel {{ color_class }} panel_three">
+        <div class="panel-heading">
+            {{ '%s ( %s )'|format(title,user_list|length) }}
+        </div>
+        <div class="panel-body">
+            {% for user in user_list %}
+                {% if g_user!=user %}
+                    <a href="{{ url_for('ws.ws_msg_single_detail',model_name=user.__class__.__name__,receiver_name=user.username) }}">
+                        <div class="media ml">
+                            <div class="media-left ml_left">
+                                    <img class="media-object img-circle avatar" src="{{ static('ws/images/default_avatar.jpg') }}" alt="">
+                            </div>
+                            <div class="media-body ml_body">
+                                    <div class="ml_user">
+                                        <span class="username">{{ user.username }}</span>
+{#                                        <span class="badge badge_style" data_model_id="{{ user.__class__.__name__+'__'+user.id|string }}">0</span>#}
+                                        {% if user.__class__.__name__+'__'+user.id|string in online_set %}
+                                            <span class="label label-success online_info" >在线</span>
+                                        {% else %}
+                                            <span class="label label-default online_info">离线</span>
+                                        {% endif %}
+                                    </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro front_user_list(title,user_list,g_user,color_class,online_set) %}
+    <div class="panel {{ color_class }} panel_three">
+        <div class="panel-heading">
+            {{ '%s ( %s )'|format(title,user_list|length) }}
+        </div>
+        <div class="panel-body">
+            {% for user in user_list %}
+                {% if g_user!=user %}
+                    <a href="{{ url_for('front.front_msg_single_detail',model_name=user.__class__.__name__,receiver_name=user.username) }}">
+                        <div class="media ml">
+                            <div class="media-left ml_left">
+                                <img class="media-object img-circle avatar" src="{{ static('ws/images/default_avatar.jpg') }}" alt="">
+                            </div>
+                            <div class="media-body ml_body">
+                                <div class="ml_user">
+                                    <span class="username">{{ user.username }}</span>
+{#                                    <span class="badge badge_style" data_model_id="{{ user.__class__.__name__+'__'+user.id|string }}">0</span>#}
+                                    {% if user.__class__.__name__+'__'+user.id|string in online_set %}
+                                        <span class="label label-success online_info" >在线</span>
+                                    {% else %}
+                                        <span class="label label-default online_info">离线</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro chat_message_left(message) %}
+    <div class="media md">
+        <div class="media-left md_left">
+            <a href="">
+                <img class="avatar media-object img-circle" src="{{ static('ws/images/default_avatar.jpg') }}" alt="">
+            </a>
+        </div>
+        <div class="media-body md_body">
+            <div class="md_user_info">
+                <span>{{ message.sender_name or message.sender.username }}</span>
+                <span>{{ message.create_time|datetime }}</span>
+            </div>
+            <div class="md_content">
+                {{ message.content|safe }}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro chat_message_right(message) %}
+    <div class="right_box">
+        <div class="media md_right">
+            <div class="media-body md_body_right">
+                <div class="md_user_info_right">
+                    <span>{{ message.sender_name or message.sender.username }}</span>
+                    <span>{{ message.create_time|datetime }}</span>
+                </div>
+                <div class="md_content_right">
+                    {{ message.content|safe }}
+                </div>
+            </div>
+            <div class="media-right md_right">
+                <a href="">
+                    <img class="avatar media-object img-circle" src="{{ static('ws/images/default_avatar.jpg') }}" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro chat_message(message,self_user) %}
+    {% if self_user.username==message.sender.username and self_user.__class__.__name__==message.sender.__class__.__name__ %}
+        {{ chat_message_right(message) }}
+    {% else %}
+        {{ chat_message_left(message) }}
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,67 @@
+{% extends 'front/front_base.html' %}
+
+{% block title %}
+    三方协议
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('customs/css/customs_triple_agreement.css') }}">
+    <script src="{{ static('front/js/front_triple_agreement.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="content">
+        <div class="top">
+            <form action="" class="form form_middle">
+                <div class="input-group input_middle">
+                    <input type="text" class="form-control" name="search" placeholder="请输入关区名">
+                    <div class="input-group-btn">
+                        <button class="btn btn-success">搜索</button>
+                    </div>
+                </div>
+            </form>
+            <a href="{{ url_for('front.front_add_triple_agreement') }}" class="btn btn-info add_btn">签约新关区</a>
+        </div>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>企业名称</th>
+                    <th>组织机构代码</th>
+                    <th>签约关区</th>
+                    <th>签署人</th>
+                    <th>签署日期</th>
+                    <th>解约人</th>
+                    <th>解约日期</th>
+                    <th>协议状态</th>
+                    <th>海关回执</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agreement in agreements %}
+                    <tr>
+                        <td>{{ agreement.company.company_name }}</td>
+                        <td>{{ agreement.company.organization_code }}</td>
+                        <td>{{ agreement.zone.name }}</td>
+                        <td>{{ agreement.sign_name or '' }}</td>
+                        <td>{{ agreement.sign_time|date }}</td>
+                        <td>{{ agreement.cancel_name or '' }}</td>
+                        <td>{{ agreement.cancel_time or ''}}</td>
+                        <td>{{ agreement.status.name or ''}}</td>
+                        <td>{{ agreement.reply.content }}</td>
+                        <td>
+                            {% if agreement.status.id==1 %}
+                                <button class="btn btn-danger btn-xs cancel_btn" data_agreement_id="{{ agreement.id }}" data_agreement_zone_name="{{ agreement.zone.name }}">解除合约</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

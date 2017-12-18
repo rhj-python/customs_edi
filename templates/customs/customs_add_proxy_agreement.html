@@ -1,0 +1,21 @@
+{% extends 'customs/customs_base.html' %}
+{% from 'common/common_macro.html' import proxy_agreement_operate %}
+
+{% block title %}
+    新增委托协议
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('customs/css/customs_add_proxy_agreement.css') }}">
+    <script src="{{ static('customs/js/customs_add_proxy_agreement.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    {{ proxy_agreement_operate(proxy,trade_modes=trade_modes,
+    pay_modes=pay_modes,document_types=document_types,agreement=None
+    ) }}
+{% endblock %}

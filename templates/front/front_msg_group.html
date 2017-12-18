@@ -1,0 +1,28 @@
+{% extends 'front/front_msg_base.html' %}
+{% from 'common/common_ws_macro.html' import group_list %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ static('common/css/common_msg_group.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="main_m">
+        <div class="panel panel-primary gp_panel">
+            <div class="panel-heading">{{ '群 ( %s )'|format(groups|length) }}</div>
+            <div class="panel-body">
+
+                <a href="{{ url_for('front.front_msg_group_detail',group_name='Front_User') }}">
+                    <div class="media ml">
+                        <div class="media-left ml_left">
+                            <img class="media-object img-circle avatar" src="{{ static('ws/images/default_group_avatar.jpg') }}" alt="">
+                        </div>
+                        <div class="media-body ml_body">
+                            <div class="ml_user">客户群</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

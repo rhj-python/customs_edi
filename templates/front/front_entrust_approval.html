@@ -1,0 +1,40 @@
+{% extends 'front/front_base.html' %}
+
+{% block title %}
+    委托申请
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('front/css/front_entrust_approval.css') }}">
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="main">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                新建委托书
+            </div>
+            <div class="panel-body">
+                <span class="word_info">首次与申报企业建立委托书或者委托业务变更,委托书超过有效期也要重新建立委托书</span>
+                    <a href="{{ url_for('front.front_agree_proxy') }}" class="btn btn-info">建立委托书&协议</a>
+                </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                新增委托协议
+            </div>
+            <div class="panel-body">
+                <span class="word_info">在既有委托书的基础上,增加委托协议</span>
+               {% if not proxy %}
+                    <span class="btn btn-info" disabled>委托书详情&建立委托协议</span>
+               {% else %}
+                    <a href="{{ url_for('front.front_proxy_agreement_list') }}" class="btn btn-info">委托详情</a>
+               {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

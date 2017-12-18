@@ -1,0 +1,168 @@
+{% from 'common/common_macro.html' import static %}
+{% from 'common/common_ws_macro.html' import chat_message_left %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <meta charset="utf-8"/>
+        <meta name="keywords" content="html,css,javascript" />
+        <meta name="description" content="html,css,javascript" />
+
+        {% include 'common/common_include.html' %}
+        <link rel="stylesheet" href="{{ static('common/css/common_msg_detail.css') }}">
+        <link rel="stylesheet" href="{{ static('customs/css/customs_base.css') }}">
+        <link rel="stylesheet" href="{{ static('common/css/common_right_base.css') }}">
+        <link rel="stylesheet" href="{{ static('common/wangEditor_3/wangEditor.min.css') }}">
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+        <script src="{{ static('customs/js/customs_base.js') }}"></script>
+        <script src="{{ static('common/js/common_right_base.js') }}"></script>
+
+        <script src="{{ static('common/wangEditor_3/wangEditor.min.js') }} "></script>
+
+
+{#        <script src="{{ static('common/editor/js/wangEditor.js') }}" ></script>#}
+
+        {% block head %}
+
+        {% endblock %}
+
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="top_nav">
+                <nav class="navbar navbar-inverse navbar_green navbar-static-top">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a href="" class="navbar-brand">报关系统</a>
+                        </div>
+                        <div class="navbar-collapse collapse">
+                            <ul class="nav navbar-nav">
+                                <li><a href="{{ url_for('customs.customs_index') }}">首页</a></li>
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                {% if customs_user %}
+                                    <li style="display: none" id="user_info" data_id="{{ customs_user.id}}" data_model="{{ customs_user.__class__.__name__ }}"></li>
+                                    <li><a id="sender_name">{{ customs_user.username }}</a></li>
+                                    <li><a href="{{ url_for('customs_account.customs_choice_login') }}">注销</a></li>
+                                {% elif employee %}
+                                    <li style="display: none" id="user_info" data_id="{{ employee.id}}" data_model="{{ employee.__class__.__name__ }}"></li>
+                                    <li><a id="sender_name">{{ employee.username}}</a></li>
+                                    <li><a href="{{ url_for('customs_account.customs_logout') }}">注销</a></li>
+                                {% else %}
+                                    <li><a href="{{ url_for('customs_account.customs_choice_login') }}">登录</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="main">
+                <div class="left_nav">
+                    <ul class="nav nav-pills nav-stacked green_pills">
+                        <li class="li_title">海关功能</li>
+                        <li>
+                            <button class="green_btn">三方协议<span class="glyphicon glyphicon-plus gly"></span></button>
+                            <ul class="unfold">
+                                <li class="zone"><a href="{{ url_for('customs.customs_zone') }}">关区功能</a></li>
+                                <li class="agreement_list"><a href="{{ url_for('customs.customs_agreement_list',filter_id=2) }}">协议列表</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <button class="green_btn">审单功能<span class="glyphicon glyphicon-plus gly"></span></button>
+                            <ul class="unfold">
+                                <li class="customs_import"><a href="{{ url_for('customs.customs_import_check',page=1,filter_id=0,sort_id=5,asc_id=1) }}">进口报关单审核</a></li>
+                                <li class="customs_export"><a href="{{ url_for('customs.customs_export_check',page=1,filter_id=0,sort_id=5,asc_id=1) }}">出口报关单审核</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    {% if has_permission(employee,'menu','customs_menu') %}
+                        <ul class="nav nav-pills nav-stacked green_pills">
+                            <li class="li_title">报关功能</li>
+                            <li class="triple_agreement"><a href="{{ url_for('customs.customs_triple_agreement') }}">三方协议</a></li>
+                            <li class="proxy"><a href="{{ url_for('customs.customs_proxy_list') }}">委托书列表</a></li>
+                            <li>
+                                <button class="green_btn">报关
+                                    <span class="glyphicon glyphicon-plus gly"></span>
+                                </button>
+                                <ul class="unfold">
+                                    <li class="import_declaration"><a href="{{ url_for('customs.customs_import_declaration',page=1,filter_id=0,sort_id=1,asc_id=1) }}">进口报关单列表</a></li>
+                                    <li class="export_declaration"><a href="{{ url_for('customs.customs_export_declaration',page=1,filter_id=0,sort_id=1,asc_id=1) }}">出口报关单列表</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <br>
+                    {% endif %}
+
+                    <ul class="nav nav-pills nav-stacked green_pills">
+                        <li class="li_title">管理功能</li>
+                        <li>
+                            <button class="green_btn">个人中心
+                                <span class="glyphicon glyphicon-plus gly"></span>
+                            </button>
+                            <ul class="unfold">
+                                <li class="profile"><a href="{{ url_for('customs.manage_profile') }}">个人信息</a></li>
+                                <li class="reset_pwd"><a href="{{ url_for('customs.manage_reset_pwd') }}">修改密码</a></li>
+                                <li class="reset_email"><a href="{{ url_for('customs.manage_reset_email') }}">修改邮箱</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                             <button class="green_btn">前台管理
+                                <span class="glyphicon glyphicon-plus gly"></span>
+                            </button>
+                            <ul class="unfold">
+                                <li class="user_manage"><a href="{{ url_for('customs.manage_user_manage') }}">用户管理</a></li>
+                                <li class="client_company_list"><a href="{{ url_for('customs.manage_client_company_list') }}">客户公司列表</a></li>
+                            </ul>
+                        </li>
+                         <li>
+                           <button class="green_btn">企业管理
+                                <span class="glyphicon glyphicon-plus gly"></span>
+                            </button>
+                            <ul class="unfold">
+                                <li class="employee_manage"><a href="{{ url_for('customs.manage_employee_manage') }}">员工管理</a></li>
+                                <li class="role_manage"><a href="{{ url_for('customs.manage_role_manage') }}">职位管理</a></li>
+                                <li class="permission_manage"><a href="{{ url_for('customs.manage_permission_manage') }}">权限管理</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-pills nav-stacked green_pills">
+                        <li class="li_title">综合功能</li>
+                        <li class="msg_nav"><a href="{{ url_for('ws.ws_msg_single') }}">即时通讯
+                            <span class="badge badge_style" id="bs"></span>
+                        </a></li>
+                        <li class="chart"><a href="{{ url_for('chart.chart_index') }}">数据报表</a></li>
+                    </ul>
+
+
+                </div>
+                <div class="container-fluid">
+                    <div class="main_content">
+                        <h1>{% block page_title %}{% endblock %}</h1>
+                        {% block main_content %}
+
+                        {% endblock %}
+                    </div>
+                    <div class="panel panel-primary panel_grape mp_grape">
+                        <div class="panel-heading">所有人广播
+                            <span class="glyphicon glyphicon-minus" id="gly_minus"></span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="r_message">
+                                {% for message in msg_alls[::-1] %}
+                                    {{ chat_message_left(message) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="mp_broadcast">
+                        <span class="glyphicon glyphicon-comment" id="mp_icon"></span>
+                    </div>
+                </div>
+
+
+
+
+    </body>
+</html>

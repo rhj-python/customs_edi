@@ -1,0 +1,37 @@
+{% extends 'ws/ws_msg_base.html' %}
+{% from 'common/common_ws_macro.html' import chat_message %}
+
+{% block title %}
+    所有人广播
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ static('common/css/common_msg_detail.css') }}">
+    <script src="{{ static('ws/js/ws_msg_all.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+     <div class="main_m">
+        <div class="panel panel-primary panel_grape">
+        <div class="panel panel-heading">{{ self.title() }}</div>
+        {% block receiver_info %}
+            <div id="receiver_info" style="display: none" data_id="none" data_model="All"></div>
+        {% endblock %}
+        <div class="panel-body">
+            <div class="content">
+                {% for message in messages %}
+                    {{ chat_message(message,employee or customs_user) }}
+                {% endfor %}
+            </div>
+            <div id="editor1"></div>
+            <div id="editor2"></div>
+            <br>
+            <div class="form-group form_right">
+                <button class="btn btn-primary" id="send_btn">发送</button>
+                <a class="btn btn-default" href="{{ url_for('ws.ws_msg_single') }}">返回</a>
+            </div>
+        </div>
+    </div>
+     </div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    关区功能
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('customs/css/customs_zone.css') }}">
+    <script src="{{ static('customs/js/customs_zone.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="top">
+        <button class="btn btn-info add_btn">新增关区</button>
+    </div>
+    <div class="main_table">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>关区ID</th>
+                    <th>名称</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for zone in customs_zones  %}
+                 <tr>
+                    <td>{{ zone.id }}</td>
+                    <td>{{ zone.name }}</td>
+                    <td>
+                        <button class="btn btn-warning btn btn-xs edit_btn" data_id="{{ zone.id }}" data_name="{{ zone.name }}">编辑</button>
+                        <button class="btn btn-danger btn btn-xs delete_btn" data_id="{{ zone.id }}" data_name="{{ zone.name }}">删除</button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'customs/customs_check_base.html' %}
+{% from 'common/common_macro.html' import declaration_status %}
+
+{% block title %}
+    出口报关单审核
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+
+{% block head %}
+    <script src="{{ static('customs/js/customs_export_check.js') }}"></script>
+{% endblock %}
+
+{% block port %}
+    出口口岸
+{% endblock %}
+
+ {% block tbody %}
+    {% for declaration in declarations %}
+        <tr>
+            <td>{{ declaration.declaration_code }}</td>
+            <td>{{ declaration.customs_date }}</td>
+            <td>{{ declaration.export_port }}</td>
+            <td>{{ declaration.trade_mode.name }}</td>
+            <td>{{ declaration.tax_mode.name }}</td>
+            <td>{{ declaration_status(declaration.status.id) }}</td>
+            <td>
+                <a href="{{ url_for('customs.customs_export_check_detail',declaration_uuid=declaration.uuid) }}" class="btn btn-warning btn-xs">明细</a>
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block footer %}
+    <div class="pag">
+        <ul class="pagination">
+            {% if current_page>show_page %}
+                <li><a href="{{ url_for('customs.customs_export_check',page=1,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">首页</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('customs.customs_export_check',page=pre_page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">&laquo;</a></li>
+
+            {% for page in page_li %}
+                <li class="{% if page==current_page %}active{% endif %}"><a href="{{ url_for('customs.customs_export_check',page=page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">{{ page }}</a></li>
+            {% endfor %}
+
+            <li><span>{{ '共 %s 页'|format(total_page) }}</span></li>
+
+            <li><a href="{{ url_for('customs.customs_export_check',page=next_page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">&raquo;</a></li>
+            {% if current_page<total_page-(total_page%show_page) %}
+                <li><a href="{{ url_for('customs.customs_export_check',page=total_page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">尾页</a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}

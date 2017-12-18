@@ -1,0 +1,90 @@
+.form_style{
+    max-width: 1200px;
+    margin-bottom: auto;
+}
+
+.input_style{
+    width:24%;
+    float:left;
+    margin-bottom: 15px;
+    margin-right: 12px;
+}
+
+.main_panel{
+    width:1200px;
+}
+
+.plus_style{
+    font-size: 24px;
+    color:#5cb85c;
+    float:right;
+    line-height: 16px;
+    cursor:pointer;
+}
+
+.plus_style_2{
+    float:right;
+}
+
+.remove_style{
+    font-size: 28px;
+    color:#d9534f;
+    line-height: 32px;
+    cursor:pointer;
+}
+
+.item_code{
+    width:50px;
+}
+
+.tax_free_mode{
+    width:120px;
+}
+
+.unit_price,.total_price{
+    width:100px;
+}
+
+#commodity_group{
+    display: none;
+}
+
+.progress_style{
+    margin-top:7px;
+    margin-bottom: 0;
+    min-width:240px;
+}
+
+
+
+.document_type_td{
+    width:150px;
+}
+
+.progress_style{
+    display: none;
+}
+
+.upload_style{
+    color:#337ab7;
+    font-size: 28px;
+    cursor:pointer;
+    line-height: 32px;
+    margin-right: 14px;
+}
+
+.document_operate_td{
+    width:200px;
+}
+
+h4{
+    text-align: center;
+}
+
+.preview_btn{
+    display: none;
+}
+
+.btn_group{
+    text-align: center;
+}

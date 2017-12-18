@@ -1,0 +1,57 @@
+{% extends 'customs/customs_declaration_list_base.html' %}
+{% from 'common/common_macro.html' import declaration_pagination %}
+
+{% block head %}
+    {{ super() }}
+    <script src="{{ static('customs/js/customs_import_declaration_list.js') }}"></script>
+{% endblock %}
+
+{% block add_declaration_btn %}
+{#    {% if has_permission(employee,'menu','declaration_add_menu') %}#}
+        <a href="{{ url_for('customs.customs_add_import_declaration') }}" class="btn btn-info">新建报关单</a>
+{#    {% endif %}#}
+{% endblock %}
+
+{% block table_body %}
+     {% for declaration in declarations %}
+        <tr>
+            <td>{{ declaration.pre_entry_code }}</td>
+            <td>{{ declaration_status(declaration.status.id) }}</td>
+            <td>{{ declaration.create_time }}</td>
+            <td>{{ declaration.business_company.company_name }}</td>
+            <td>{{ declaration.import_port }}</td>
+            <td>
+                {% if declaration.status.id==1 %}
+                    <a href="{{ url_for('customs.customs_edit_import_declaration',declaration_uuid=declaration.uuid) }}" class="btn btn-warning btn-xs">编辑</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block footer %}
+    <div class="pag">
+        <ul class="pagination">
+            <li><a href="{{ url_for('customs.customs_import_declaration',page=pre_page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">&laquo;</a></li>
+            {% if current_page>show_page %}
+                <li><a href="{{ url_for('customs.customs_import_declaration',page=1,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">首页</a></li>
+            {% endif %}
+
+            {% for page in page_li %}
+                {% if page==current_page %}
+                    <li class="active"><a href="{{ url_for('customs.customs_import_declaration',page=page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('customs.customs_import_declaration',page=page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            <li><span>{{ '共 %s 页' |format(total_page) }}</span></li>
+
+            {% if current_page<total_page-(total_page%show_page) %}
+                <li><a href="{{ url_for('customs.customs_import_declaration',page=total_page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">尾页</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('customs.customs_import_declaration',page=next_page,filter_id=current_filter_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">&raquo;</a></li>
+
+        </ul>
+    </div>
+{% endblock %}

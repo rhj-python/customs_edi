@@ -1,0 +1,146 @@
+{% extends 'customs/customs_base.html' %}
+{%  from 'common/common_macro.html' import proxy_agreement_list %}
+
+{% block title %}
+    委托书详情
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('customs/css/customs_proxy_detail.css') }}">
+    <script src="{{ static('customs/js/customs_proxy_detail.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="proxy_info">
+        <div class="panel panel-primary">
+            <div class="panel-heading">委托书信息</div>
+            <div class="panel-body">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <td>委托方企业名称</td>
+                        <td>{{ proxy.client.company_name }}</td>
+                        <td>委托方组织机构代码</td>
+                        <td>{{ proxy.client.organization_code }}</td>
+                    </tr>
+                    <tr>
+                        <td>委托方海关编码</td>
+                        <td>{{ proxy.client.customs_registration_code }}</td>
+                        <td>委托方法人授权签署人</td>
+                        <td>{{ proxy.client.legal_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>委托协议份数</td>
+                        <td>{{  proxy.export_agreements.count() + proxy.export_agreements.count() }}</td>
+                        <td>委托书状态</td>
+                        <td>
+                            {% if proxy.expiry_time|timeout  %}
+                                <span class="label label-danger">已过期</span>
+                            {% else %}
+                                <span class="label label-success">已建立委托书</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="top">
+        <div class="form-group filter_style">
+            <div class="input-group">
+                <span class="input-group-addon filter_btn">过滤</span>
+                <select name="filter" data_proxy_id="{{ proxy.id }}" class="form-control">
+                    <option value="1" {% if current_filter_id==1 %}selected{% endif %}>显示 全部</option>
+                    <option value="2" {% if current_filter_id==2 %}selected{% endif %}>仅显示 进口</option>
+                    <option value="3" {% if current_filter_id==3 %}selected{% endif %}>仅显示 出口</option>
+                    <option value="4" {% if current_filter_id==4 %}selected{% endif %}>仅显示 已建立委托的 委托协议</option>
+                    <option value="5" {% if current_filter_id==5 %}selected{% endif %}>仅显示 发起 的委托协议</option>
+                    <option value="6" {% if current_filter_id==6 %}selected{% endif %}>仅显示 已被拒绝 的委托协议</option>
+                </select>
+            </div>
+        </div>
+        <form action="" class="form search_style">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="输入 ID 提单号 来查询">
+                <div class="input-group-btn">
+                    <button class="btn btn-success">查询</button>
+                </div>
+            </div>
+        </form>
+        
+        <a href="{{ url_for('customs.customs_add_proxy_agreement',proxy_id=proxy.id) }}" class="btn btn-info">新增委托协议</a>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>委托协议ID</th>
+                <th>贸易种类</th>
+                <th>主要货物名称</th>
+                <th>HS编码</th>
+                <th>提单号</th>
+                <th>贸易方式</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if import_agreements %}
+                {% for agreement in import_agreements  %}
+                    <tr>
+                        <td>{{ agreement.id }}</td>
+                        <td>进口</td>
+                        <td>{{ agreement.goods_name }}</td>
+                        <td>{{ agreement.hs_code }}</td>
+                        <td>{{ agreement.bl_code }}</td>
+                        <td>{{ agreement.trade_mode.name }}</td>
+                        <td>
+                            {% if agreement.status.id==1 %}
+                                <span class="label label-warning">{{ agreement.status.name }}</span>
+                            {% elif agreement.status.id==2 %}
+                                <span class="label label-success">{{ agreement.status.name }}</span>
+                            {% elif agreement.status.id==3 %}
+                                <span class="label label-danger">{{ agreement.status.name }}</span>
+                            {% elif agreement.status.id==4 %}
+                                <span class="label label-default">{{ agreement.status.name }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('customs.customs_proxy_agreement_detail',agreement_type_id=1,agreement_id=agreement.id) }}" class="btn btn-warning btn-xs">详情</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+
+            {% if export_agreements %}
+                {% for agreement in export_agreements  %}
+                    <tr>
+                        <td>{{ agreement.id }}</td>
+                        <td>出口</td>
+                        <td>{{ agreement.goods_name }}</td>
+                        <td>{{ agreement.hs_code }}</td>
+                        <td>{{ agreement.bl_code }}</td>
+                        <td>{{ agreement.trade_mode.name }}</td>
+                        <td>
+                            {% if agreement.status.id==1 %}
+                                <span class="label label-warning">{{ agreement.status.name }}</span>
+                            {% elif agreement.status.id==2 %}
+                                <span class="label label-success">{{ agreement.status.name }}</span>
+                            {% elif agreement.status.id==3 %}
+                                <span class="label label-danger">{{ agreement.status.name }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('customs.customs_proxy_agreement_detail',agreement_type_id=2,agreement_id=agreement.id) }}" class="btn btn-warning btn-xs">详情</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% from 'common/common_macro.html' import static,alert_message %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+    {% include 'common/common_include.html' %}
+
+    <link rel="stylesheet" href="{{ static('front/css/front_sign_base.css') }}">
+    <script src="{{ static('front/js/front_regist.js') }}"></script>
+
+    {% block head %}
+    
+    {% endblock %}
+
+</head>
+<body>
+    <form action="" class="form form_min" method="post">
+        <h2>{% block page_title %}登录{% endblock %}</h2>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% block main_form_group %}
+
+        {% endblock %}
+
+        {% include 'common/common_graph_captcha.html' %}
+
+        {% block footer_form_group %}
+
+        {% endblock %}
+
+
+
+    </form>
+
+	
+	
+
+
+
+	
+</body>
+</html>

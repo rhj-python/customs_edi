@@ -1,0 +1,46 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    新增职位
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <script src="{{ static('manage/js/manage_add_role.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <form action="" class="form form_large" method="post">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">职位名称</span>
+                <input type="text" class="form-control" name="name">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">职位描述</span>
+                <input type="text" class="form-control" name="desc">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">拥有权限</span>
+                <div class="form-control checkbox_div">
+                    {% for permission in permissions %}
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="permissions" value="{{ permission.id }}">{{ permission.desc }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary add_btn">立即新增</button>
+            <a class="btn btn-default" href="{{ url_for('customs.manage_role_manage') }}">返回</a>
+        </div>
+    </form>
+{% endblock %}

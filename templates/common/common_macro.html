@@ -1,0 +1,565 @@
+{% macro static(filename='') %}
+    {{ url_for('static',filename=filename) }}
+{% endmacro %}
+
+{% macro alert_message(message) %}
+    {% if message %}
+        <p class="alert alert-danger">{{ message }}</p>
+    {% endif %}
+{% endmacro %}
+
+{% macro comment_group(comment,post) %}
+    {% if comment.origin %}
+            {{ comment_group(comment.origin,post)  }}
+            <div class="media media_style second_style">
+                <div class="media-left media_left second_left">
+                    <img src="{{ comment.origin.author.avatar or static('front/images/logo.jpg') }}" alt="" class="media-object img-circle avatar">
+                </div>
+                <div class="media-body media_body second_body">
+                    <div class="media-heading comment_info">
+                        <span>{{ comment.origin.author.username }}</span>
+                        <span>{{ comment.origin.create_time }}</span>
+                    </div>
+                    <div class="comment_body">
+                        <p class="comment_content">{{ comment.origin.comment|safe }}</p>
+                        <a class="comment_reply" href="{{ url_for('post.front_reply_comment',post_id=post.id,comment_id=comment.origin.id) }}">回复</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+{% endmacro %}
+
+{% macro proxy_agreement_list(proxy,panel_style='panel-info',btn_style='btn-info') %}
+    <div class="panel {{ panel_style }} agreement">
+            <div class="panel-heading">附带委托协议
+                <div class="add_box">
+                    <button class="btn {{ btn_style }} btn_right" id="add_agreement_btn">新增委托协议</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>委托协议编号</th>
+                            <th>贸易种类</th>
+                            <th>主要货物名称</th>
+                            <th>HS编码</th>
+                            <th>提单号</th>
+                            <th>贸易方式</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="agreement_list">
+                        {% for agreement in proxy.import_agreements %}
+                            <tr>
+                                <td>{{ agreement.id }}</td>
+                                <td>进口</td>
+                                <td>{{ agreement.goods_name }}</td>
+                                <td>{{ agreement.hs_code }}</td>
+                                <td>{{ agreement.bl_code }}</td>
+                                <td>{{ agreement.trade_mode.name }}</td>
+                                <td>
+                                    {% if agreement.status.id==1 %}
+                                        <span class="label label-warning">{{ agreement.status.name }}</span>
+                                    {% elif agreement.status.id==2 %}
+                                        <span class="label label-success">{{ agreement.status.name }}</span>
+                                    {% elif agreement.status.id==3 %}
+                                        <span class="label label-danger">{{ agreement.status.name }}</span>
+                                    {% elif agreement.status.id==4 %}
+                                        <span class="label label-default">{{ agreement.status.name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('front.front_agreement_detail',agreement_type_id=1,agreement_uuid=agreement.uuid) }}" class="btn btn-warning btn-xs">明细</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        {% for agreement in proxy.export_agreements %}
+                            <tr>
+                                <td>{{ agreement.id }}</td>
+                                <td>出口</td>
+                                <td>{{ agreement.goods_name }}</td>
+                                <td>{{ agreement.hs_code }}</td>
+                                <td>{{ agreement.bl_code }}</td>
+                                <td>{{ agreement.trade_mode.name }}</td>
+                                <td>
+                                    {% if agreement.status.id==1 %}
+                                        <span class="label label-warning">发起</span>
+                                    {% elif agreement.status.id==2 %}
+                                        <span class="label label-success">已建立委托</span>
+                                    {% elif agreement.status.id==3 %}
+                                        <span class="label label-danger">经营单位已拒绝</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not agreement.is_active %}
+                                        <a href="{{ url_for('front.front_agreement_detail',agreement_type_id=2,agreement_uuid=agreement.uuid) }}" class="btn btn-warning btn-xs">明细</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+{% endmacro %}
+
+
+
+{% macro proxy_agreement_operate(proxy,trade_modes,pay_modes,document_types,agreement=None,current_proxy_agreement_type_id=None,edit=False) %}
+    <link rel="stylesheet" href="{{ static('common/css/common_macro.css') }}">
+
+    {% if not agreement %}
+        {{ proxy_agreement_add(proxy,trade_modes,pay_modes,document_types=document_types) }}
+    {% else %}
+        {{ proxy_agreement_detail(proxy,trade_modes,pay_modes,agreement,document_types,current_proxy_agreement_type_id=current_proxy_agreement_type_id,edit=edit) }}
+    {% endif %}
+{% endmacro %}
+
+
+{% macro proxy_agreement_add(proxy,trade_modes,pay_modes,document_types,current_proxy_agreement_type_id) %}
+    <div class="agreement" id="agreement_toggle">
+            <div class="panel panel-info">
+                <div class="panel-heading">新增委托协议</div>
+                <div class="panel-body">
+                    <div class="panel panel-info panel_left">
+                        <div class="panel-body">
+                            <form action="" class="form" method="post">
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">委托方</span>
+                                        <input type="text" name="client" class="form-control" value="{{ proxy.client.company_name }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">贸易种类</span>
+                                        <select name="trade_class" class="form-control">
+                                            <option value="1">进口贸易</option>
+                                            <option value="2">出口贸易</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">主要货物名称</span>
+                                        <input type="text" name="goods_name" class="form-control" placeholder="长度不能超过60位">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">HS编码</span>
+                                        <input type="text" name="hs_code" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">货物总价</span>
+                                        <input type="text" name="total_price" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">报关收费</span>
+                                        <input type="text" name="customs_price" class="form-control" placeholder="选填" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">进出口日期</span>
+                                        <input type="date" name="import_or_export_date" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">提货单</span>
+                                        <input type="text" name="bl_code" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">贸易方式</span>
+                                        <select name="trade_mode_id" class="form-control">
+                                            {% for trade_mode in trade_modes %}
+                                                <option value="{{trade_mode.id }}">{{ trade_mode.name }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">原产国或运抵国</span>
+                                        <input type="text" name="country" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">其他要求</span>
+                                        <textarea name="country" class="form-control" placeholder="选填"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">联系电话</span>
+                                        <input type="text" name="telephone" class="form-control" placeholder="选填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">付款方</span>
+                                        <select name="pay_mode_id" class="form-control">
+                                            {% for pay_mode in pay_modes %}
+                                                <option value="{{ pay_mode.id }}">{{ pay_mode.name }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="panel panel-info panel_right">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">被委托方</span>
+                                    <input type="text" class="form-control" name="broker_company_name" value="{{ proxy.broker.company_name }}" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">报关单编号</span>
+                                    <input type="text" class="form-control" disabled name="customs_code" >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">收到单证日期</span>
+                                    <input type="text" class="form-control" disabled name="receive_doc_date" >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon agreement_style">收到单证情况</span>
+                                    <div class="form-control form_checkbox checkbox_style" disabled>
+                                        {% for document_type in document_types %}
+                                            <label for="" class="checkbox-inline">
+                                                <input type="checkbox" name="document_types" value="{{ document_type.id }}" disabled>{{ document_type.name }}
+                                            </label>
+                                        {% endfor %}
+
+                                </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">承诺说明</span>
+                                    <textarea name="commit_desc" id="" cols="30" rows="10" class="form-control" disabled ></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">联系电话</span>
+                                    <input type="text" name="broker_telephone" class="form-control" disabled value="{{ proxy.broker.telephone }}" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="middle_btn">
+                            <button class="btn btn-primary" id="agreement_submit_btn" data_proxy_id="{{ proxy.id }}">建立协议</button>
+                            <button class="btn btn-default" id="agreement_cancel_btn">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endmacro %}
+
+{% macro proxy_agreement_detail(proxy,trade_modes,pay_modes,agreement,document_types,current_proxy_agreement_type_id,edit=False) %}
+    <div class="agreement" id="agreement_toggle">
+            <div class="panel panel-info">
+                <div class="panel-heading">委托协议</div>
+                <div class="panel-body">
+                    <div class="panel panel-info panel_left">
+                        <div class="panel-body">
+                            <form action="" class="form" method="post">
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">委托方</span>
+                                        <input type="text" name="client" class="form-control" value="{{ agreement.proxy.client.company_name }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">贸易种类</span>
+                                        <select name="trade_class" class="form-control" disabled>
+                                            <option value="1" {% if current_agreement_type_id==1 %}selected{% endif %}>进口贸易</option>
+                                            <option value="2" {% if current_agreement_type_id==2 %}selected{% endif %}>出口贸易</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">主要货物名称</span>
+                                        <input type="text" name="goods_name" class="form-control" placeholder="长度不能超过60位" value="{{ agreement.goods_name }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">HS编码</span>
+                                        <input type="text" name="hs_code" class="form-control" placeholder="必填" value="{{ agreement.hs_code }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">货物总价</span>
+                                        <input type="text" name="total_price" class="form-control" placeholder="必填" value="{{ agreement.total_price }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">报关收费</span>
+                                        <input type="text" name="customs_price" class="form-control" placeholder="选填" value="{{ agreement.customs_price }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">进出口日期</span>
+                                        <input type="date" name="import_or_export_date" class="form-control" value="{{ agreement.import_or_export_date|date }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">提货单</span>
+                                        <input type="text" name="bl_code" class="form-control" placeholder="必填" value="{{ agreement.bl_code }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">贸易方式</span>
+                                        <select name="trade_mode_id" class="form-control" disabled>
+                                            {% for trade_mode in trade_modes %}
+                                                <option value="{{trade_mode.id }}" {% if trade_mode==agreement.trade_mode %}selected{% endif %}>{{ trade_mode.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">原产国或运抵国</span>
+                                        {% if current_proxy_agreement_type_id==1 %}
+                                            <input type="text" name="country" class="form-control" placeholder="必填" value="{{ agreement.origin_country }}" disabled>
+                                        {% else %}
+                                            <input type="text" name="country" class="form-control" placeholder="必填" value="{{ agreement.destination_country }}" disabled>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">其他要求</span>
+                                        <textarea name="country" class="form-control" value="{{ agreement.other or '' }}" disabled></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">联系电话</span>
+                                        <input type="text" name="telephone" class="form-control" value="{{ agreement.telephone or '' }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon agreement_style">付款方</span>
+                                        <select name="pay_mode_id" class="form-control" disabled>
+                                            {% for pay_mode in pay_modes %}
+                                                <option value="{{ pay_mode.id }}" {% if pay_mode==agreement.pay_mode %}selected{% endif %}>{{ pay_mode.name }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+{#                                <div class="form-group">#}
+{#                                    <div class="middle_btn">#}
+{#                                        <button class="btn btn-primary" id="agreement_submit_btn" data_agreement_id="{{ agreement.uuid }}">建立协议</button>#}
+{#                                        <button class="btn btn-default" id="agreement_cancel_btn">取消</button>#}
+{#                                    </div>#}
+{#                                </div>#}
+
+
+
+                            </form>
+                        </div>
+                    </div>
+                    <div class="panel panel-info panel_right">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">被委托方</span>
+                                    <input type="text" class="form-control" name="broker_company_name" value="{{ agreement.proxy.broker.company_name }}" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">报关单编号</span>
+                                    <input type="text" class="form-control" name="customs_code" value="{{ agreement.declaration.declaration_code }}" disabled>
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">收到单证日期</span>
+
+                                    {% if agreement.declaration.docuemnt %}
+                                        <input type="text" class="form-control" disabled value="{{ agreement.declaration.documents[0].create_time }}" name="receive_doc_date" >
+                                    {% else %}
+                                        <input type="text" class="form-control" disabled name="receive_doc_date" >
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon agreement_style">收到单证情况</span>
+                                    <div class="form-control form_checkbox checkbox_style" disabled>
+                                        {% for document_type in document_types %}
+                                            <label for="" class="checkbox-inline">
+                                                <input type="checkbox" name="document_types" value="{{ document_type.id }}" disabled >{{ document_type.name }}
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">承诺说明</span>
+                                    <textarea name="commit_desc" id="" cols="30" rows="10" class="form-control" disabled></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon agreement_style">联系电话</span>
+                                    <input type="text" name="broker_telephone" class="form-control" value="{{ agreement.proxy.telephone }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if edit==True %}
+            {% if agreement.status.id==1 %}
+                <div class="middle_btn">
+                    <div class="form-group">
+                        <button class="btn btn-info submit_btn"  data_agreement_status_id="{{ agreement.status.id }}" data_operate_id="2" data_agreement_id="{{ agreement.id }}" data_agreement_type_id="{{ current_proxy_agreement_type_id }}">同意</button>
+                        <button class="btn btn-danger submit_btn" data_agreement_status_id="{{ agreement.status.id }}" data_operate_id="3" data_agreement_id="{{ agreement.id }}" data_agreement_type_id="{{ current_proxy_agreement_type_id }}">拒绝</button>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+
+{% endmacro %}
+
+{% macro declaration_status(status_id) %}
+    {% if status_id==1 %}
+        <span class="label label-default">未申报</span>
+    {% elif status_id==2 %}
+        <span class="label label-primary">已申报</span>
+    {% elif status_id==3 %}
+        <span class="label label-warning">待查验</span>
+    {% elif status_id==4 %}
+        <span class="label label-warning">待缴税</span>
+    {% elif status_id==5 %}
+        <span class="label label-danger">已退单</span>
+    {% elif status_id==6 %}
+        <span class="label label-info">待提货</span>
+    {% elif status_id==7 %}
+        <span class="label label-success">提货完成</span>
+    {% endif %}
+{% endmacro %}
+
+{% macro commodity_group(currencys,tax_free_modes) %}
+    <tr class="commodity_tr">
+        <td class="item_code" contenteditable="true">
+            <input type="text" class="form-control" name="item_code">
+        </td>
+        <td class="hs_code" contenteditable="true">
+            <input type="text" class="form-control" name="hs_code">
+        </td>
+        <td class="commodity_name" contenteditable="true">
+            <input type="text" class="form-control" name="commodity_name">
+        </td>
+        <td class="commodity_type" contenteditable="true">
+            <input type="text" class="form-control" name="commodity_type">
+        </td>
+        <td class="quantity_and_unit" contenteditable="true">
+            <input type="text" class="form-control" name="quantity_and_unit">
+        </td>
+        <td class="country" contenteditable="true">
+            <input type="text" class="form-control" name="country">
+        </td>
+        <td class="unit_price" contenteditable="true">
+            <input type="text" class="form-control" name="unit_price">
+        </td>
+        <td class="total_price" contenteditable="true">
+            <input type="text" class="form-control" name="total_price">
+        </td>
+        <td>
+            <select name="currency" class="form-control">
+                {% for currency in currencys  %}
+                    {% if current_currency==currency %}
+                        <option value="{{ currency.id }}" selected>{{ currency.name }}</option>
+                    {% else %}
+                        <option value="{{ currency.id }}">{{ currency.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="tax_free_mode" class="form-control">
+                {% for tax_free_mode in tax_free_modes  %}
+                    {% if current_tax_free_mode==tax_free_mode %}
+                        <option value="{{ tax_free_mode.id }}" selected>{{ tax_free_mode.name }}</option>
+                    {% else %}
+                        <option value="{{ tax_free_mode.id }}">{{ tax_free_mode.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </td>
+        <td class="commodity_operate">
+            <span class="glyphicon glyphicon-remove remove_style remove_commodity_btn"></span>
+        </td>
+    </tr>
+{% endmacro %}
+
+{% macro document_group(document_types) %}
+    <tr class="document_tr">
+        <td class="document_type_td">
+            <select name="document_type" class="form-control">
+                {% for type in document_types %}
+                    <option value="{{ type.id }}">{{ type.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" name="document_name" class="form-control">
+        </td>
+        <td class="progress_td">
+           <span class="label label-warning progress_label progress_status">未上传</span>
+            <div class="progress progress_style progress_div">
+                <div class="progress-bar progress-bar-info"
+                aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:2em;"
+                >0%</div>
+            </div>
+        </td>
+        <td class="document_operate_td">
+            <button class="btn btn-primary upload_btn" data_btn="">上传</button>
+            <a href="#" target="_blank" class="btn btn-info preview_btn">预览</a>
+            <button class="btn btn-danger remove_document_btn">删除</button>
+        </td>
+    </tr>
+{% endmacro %}

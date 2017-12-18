@@ -1,0 +1,23 @@
+{% from 'common/common_macro.html' import static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>选择登陆方式</title>
+    {% include 'common/common_include.html' %}
+    <link rel="stylesheet" href="{{ static('customs/css/customs_choice_login.css') }}">
+</head>
+<body>
+    <div class="main">
+        <h2>请选择您的登录方式</h2>
+        <a href="{{ url_for('customs_account.employee_login',next=next) }}" class="btn btn-success">企业登录</a>
+        <a href="{{ url_for('customs_account.customs_login',next=next) }}" class="btn btn-primary">海关登录</a>
+    </div>
+
+	
+	
+
+
+
+	
+</body>
+</html>

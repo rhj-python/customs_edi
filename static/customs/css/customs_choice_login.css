@@ -1,0 +1,15 @@
+body{
+    background-color:#eee;
+}
+
+h2{
+    padding-bottom: 20px;
+}
+
+.main{
+    width:400px;
+    padding:30px;
+    text-align: center;
+    margin:100px auto;
+    background:#fff;
+}

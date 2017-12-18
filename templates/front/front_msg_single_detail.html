@@ -1,0 +1,43 @@
+{% extends 'front/front_base.html' %}
+{% from 'common/common_ws_macro.html' import chat_message %}
+
+{% block title %}
+    与 {{ model.username }} 通讯
+{% endblock %}
+
+{% block page_title %}
+
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('common/css/common_msg_detail.css') }}">
+    <link rel="stylesheet" href="{{ static('common/wangEditor_3/wangEditor.min.css') }}">
+    <script src="{{ static('common/wangEditor_3/wangEditor.min.js') }}"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    {% block head_add %}
+        <script src="{{ static('front/js/front_msg_single_detail.js') }}"></script>
+    {% endblock %}
+{% endblock %}
+
+{% block main_content %}
+    <div class="panel panel-primary panel_grape">
+        <div class="panel panel-heading">{{ self.title() }}</div>
+        {% block receiver_info %}
+            <div id="receiver_info" style="display: none" data_id="{{ model.id }}" data_model="{{ model_name }}"></div>
+        {% endblock %}
+        <div class="panel-body">
+            <div class="content">
+                {% for message in messages %}
+                    {{ chat_message(message,front_user) }}
+                {% endfor %}
+            </div>
+            <div id="editor1"></div>
+            <div id="editor2"></div>
+            <br>
+            <div class="form-group form_right">
+                <button class="btn btn-primary" id="send_btn">发送</button>
+                <a class="btn btn-default" href="{{ url_for('front.front_msg_single') }}">返回</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

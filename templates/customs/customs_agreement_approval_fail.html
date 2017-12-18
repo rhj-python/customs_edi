@@ -1,0 +1,52 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    审批回复
+{% endblock %}
+
+{% block head %}
+    <script src="{{ static('customs/js/customs_agreement_approval_fail.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <table class="table table-bordered">
+        <tr>
+            <td>协议ID</td>
+            <td>{{ agreement.id }}</td>
+            <td>企业名称</td>
+            <td>{{ agreement.company.company_name }}</td>
+        </tr>
+        <tr>
+            <td>组织机构代码</td>
+            <td>{{ agreement.company.organization_code }}</td>
+            <td>关区名称</td>
+            <td>{{ agreement.zone.name }}</td>
+        </tr>
+        <tr>
+            <td>申请日期</td>
+            <td>{{ agreement.sign_time }}</td>
+            <td>状态</td>
+            <td>{{ agreement.status.name }}</td>
+        </tr>
+    </table>
+    <form action="" class="form" method="post">
+        <div class="form-group form_middle">
+            <div class="input-group">
+                <span class="input-group-addon">审批失败原因</span>
+                <select name="reply" class="form-control">
+                    {% for reply in replys %}
+                        <option value="{{ reply.id }}">{{ reply.content }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-danger" id="fail_btn" data_agreement_id="{{ agreement.id }}" data_reply_id="{{ reply }}">审批未通过</button>
+        </div>
+    </form>
+{% endblock %}

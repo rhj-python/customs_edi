@@ -1,0 +1,13 @@
+{% extends 'front/front_msg_single_detail.html' %}
+
+{% block title %}
+    客户群
+{% endblock %}
+
+{% block head_add %}
+    <script src="{{ static('front/js/front_msg_group_detail.js') }}"></script>
+{% endblock %}
+
+{% block receiver_info %}
+    <div id="receiver_info" style="display: none" data_id="none" data_model="{{ group_name }}"></div>
+{% endblock %}

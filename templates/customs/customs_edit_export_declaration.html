@@ -1,0 +1,72 @@
+{% extends 'customs/customs_declaration_base.html' %}
+
+{% block head %}
+    {{ super() }}
+    <script src="{{ static('customs/js/customs_edit_export_declaration.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+    编辑出口报关单
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+
+{% block port_group %}
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">出口口岸</span>
+            <input type="text" class="form-control" name="export_port" placeholder="必填" value="{{ declaration.export_port }}">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">出口日期</span>
+            <input type="date" class="form-control" name="export_date" placeholder="必填" value="{{ declaration.export_date }}">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">运抵国</span>
+            <input type="text" class="form-control" name="destination_country" placeholder="必填" value="{{ declaration.destination_country }}">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">目的港</span>
+            <input type="text" class="form-control" name="destination_port" placeholder="必填" value="{{ declaration.destination_port }}">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">生产厂家</span>
+            <input type="text" class="form-control" name="manufacturer" placeholder="必填" value="{{ declaration.manufacturer }}">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">货源地</span>
+            <input type="text" class="form-control" name="goods_origin_place" placeholder="必填" value="{{ declaration.goods_origin_place }}">
+        </div>
+    </div>
+    <div class="form-group form_style">
+    <div class="input-group input_style">
+        <span class="input-group-addon">结汇方式</span>
+        <select name="settlement_mode" class="form-control">
+            {% for settlement_mode in settlement_modes %}
+                <option value="{{ settlement_mode.id }}" {% if settlement_mode==declaration.settlement_mode %}selected{% endif %}>{{ settlement_mode.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block btn_group %}
+    <button class="btn btn-info" id="save_btn" data_declaration_uuid="{{ declaration.uuid }}">保存</button>
+    <button class="btn btn-primary" id="submit_btn" data_declaration_uuid="{{ declaration.uuid }}">保存并申报</button>
+    <a href="{{ url_for('customs.customs_export_declaration',page=1,filter_id=0,sort_id=1,asc_id=1) }}" class="btn btn-default" id="cancel_btn">取消</a>
+{% endblock %}
+

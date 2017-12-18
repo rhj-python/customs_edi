@@ -1,0 +1,21 @@
+{% extends 'front/front_base.html' %}
+{% from 'common/common_macro.html' import proxy_agreement_operate %}
+
+{% block title %}
+    委托协议详情
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('front/css/front_agreement_detail.css') }}">
+    <script src="{{ static('front/js/front_agreement_detail.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    {{ proxy_agreement_operate(proxy=agreement.proxy,agreement=agreement,trade_modes=trade_modes,pay_modes=pay_modes,document_types=document_types,
+    current_proxy_agreement_type_id=current_proxy_agreement_type_id,
+    edit=True) }}
+{% endblock %}

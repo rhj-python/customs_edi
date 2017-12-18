@@ -1,0 +1,64 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    员工管理
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block main_content %}
+    <div class="top">
+        <a href="{{ url_for('customs.manage_add_employee') }}" class="btn btn-info" id="add_btn">新增员工</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>用户名</th>
+                <th>邮箱</th>
+                <th>创建时间</th>
+                <th>职位</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in employees  %}
+                <tr>
+                    <td>{{ e.id }}</td>
+                    <td>{{ e.username }}</td>
+                    <td>{{ e.email }}</td>
+                    <td>{{ e.create_time }}</td>
+                    <td>
+                        {% for role in e.roles %}
+                            {{ '%s '|format(role.name) }}
+                        {% endfor %}
+
+                    </td>
+                    <td>
+                        {% if e.is_active %}
+                            <span class="label label-success">可用</span>
+                        {% else %}
+                            <span class="label label-danger">不可用</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if g.employee!=e %}
+                            <a href="{{ url_for('customs.manage_edit_employee',employee_id=e.id) }}" class="btn btn-warning btn-xs edit_btn">编辑</a>
+                        {% else %}
+                            <span disabled class="btn btn-warning btn-xs">编辑</span>
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

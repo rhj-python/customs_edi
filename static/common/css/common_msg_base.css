@@ -1,0 +1,47 @@
+
+.main_m a{
+    text-decoration:none;
+    color:#000;
+
+}
+
+.panel_three{
+    min-width: 200px;
+    width:30%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.main_m{
+    margin-top: 30px;
+}
+
+.ml{
+    border:1px solid #eee;
+    border-top: none;
+    padding:6px;
+}
+
+.panel-body a:first-child{
+    float:left;
+    border-top:1px solid #eee;
+    margin-bottom: 0;
+}
+
+
+
+.ml:hover{
+    background-color:#ddd;
+    color:#fff;
+}
+
+.avatar{
+    width:40px;
+    height:40px;
+
+}
+
+.ml_user{
+    line-height:40px ;
+}
+

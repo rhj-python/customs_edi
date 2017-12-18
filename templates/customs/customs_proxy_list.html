@@ -1,0 +1,55 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    委托书列表
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <table class="table table striped table-bordered">
+        <thead>
+            <tr>
+                <th>委托书ID</th>
+                <th>委托方公司名称</th>
+                <th>委托方组织机构代码</th>
+                <th>委托方海关编码</th>
+                <th>委托方法人授权签署人</th>
+                <th>委托协议份数</th>
+                <th>委托书有效期</th>
+                <th>委托书状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proxy in customs_company.broker_proxys %}
+                <tr>
+                    <td>{{ proxy.id }}</td>
+                    <td>{{ proxy.client.company_name }}</td>
+                    <td>{{ proxy.client.organization_code }}</td>
+                    <td>{{ proxy.client.customs_registration_code }}</td>
+                    <td>{{ proxy.client.legal_name }}</td>
+                    <td>{{ proxy.import_agreements.count() + proxy.export_agreements.count()}}</td>
+                    <td>{{ proxy.expiry_time | date }}</td>
+                    <td>
+                        {% if proxy.expiry_time|timeout  %}
+                            <span class="label label-danger">已过期</span>
+                        {% else %}
+                            <span class="label label-success">已建立委托书</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('customs.customs_proxy_detail',proxy_id=proxy.id,filter_id=1) }}" class="btn btn-warning btn-xs">查看详情</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

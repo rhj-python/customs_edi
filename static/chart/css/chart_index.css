@@ -1,0 +1,16 @@
+.large_chart{
+    width:1120px;
+    height:400px;
+    margin-bottom: 20px;
+}
+
+.middle_chart{
+    display: inline-block;
+    width:500px;
+    height:400px;
+}
+
+.r_chart{
+    margin-left:114px;
+}
+

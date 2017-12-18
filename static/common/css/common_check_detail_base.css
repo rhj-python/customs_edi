@@ -1,0 +1,22 @@
+.doc_style{
+    width:100%;
+    margin:0 auto;
+    text-align: center;
+}
+
+.doc_name{
+   text-align: center;
+    font-size: 20px;
+}
+
+.form_style{
+    text-align: center;
+}
+
+.form_right{
+    text-align:right;
+}
+
+#refund_div{
+    display: none;
+}

@@ -1,0 +1,8 @@
+#graph_btn{
+    padding:0;
+    margin:0;
+}
+
+#graph_btn:hover{
+    cursor:pointer;
+}

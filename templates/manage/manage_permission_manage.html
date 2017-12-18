@@ -1,0 +1,44 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    权限管理
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block main_content %}
+    <div class="top">
+        <a href="{{ url_for('customs.manage_add_permission') }}" class="btn btn-info add_btn">新增权限</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>权限名称</th>
+                <th>权限描述</th>
+                <th>权限代码</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for permission in permissions  %}
+                <tr>
+                    <td>{{ permission.id }}</td>
+                    <td>{{ permission.name }}</td>
+                    <td>{{ permission.desc }}</td>
+                    <td>{{ permission.p_code }}</td>
+                    <td>
+                        <a href="{{ url_for('customs.manage_edit_permission',permission_id=permission.id ) }}" class="btn btn-warning btn-xs edit_btn" >编辑</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

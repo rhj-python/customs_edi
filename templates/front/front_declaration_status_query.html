@@ -1,0 +1,151 @@
+{% extends 'front/front_base.html' %}
+{% from 'common/common_macro.html' import declaration_status %}
+
+{% block title %}
+    报关状态查询
+{% endblock %}
+
+{% block page_title %}
+    报关单列表
+{% endblock %}
+
+{% block head %}
+    <script src="{{ static('front/js/front_declaration_status_query.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <table class="table table-striped table-bordered">
+        <tr>
+            <td>所属公司名称</td>
+            <td>{{ business_company.company_name }}</td>
+        </tr>
+    </table>
+    <div class="top">
+        <div class="form-group filter_style">
+            <div class="input-group">
+                <span class="input-group-addon status_btn_style">贸易种类过滤</span>
+                <select name="trade_filter_id" class="form-control">
+                    <option value="0" {% if current_trade_id==0 %}selected{% endif %}>显示全部</option>
+                    <option value="1" {% if current_trade_id==1 %}selected{% endif %}>仅显示进口贸易</option>
+                    <option value="2" {% if current_trade_id==2 %}selected{% endif %}>仅显示出口贸易</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group filter_style">
+            <div class="input-group">
+                <span class="input-group-addon filter_btn_style">报关状态过滤</span>
+                <select name="status_filter_id" class="form-control">
+                    <option value="0" {% if current_status_id==0 %}selected{% endif %}>全部</option>
+                    {% for status in statuses %}
+                        <option value="{{ status.id }}" {% if current_status_id==status.id %}selected{% endif %}>{{ status.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group sort_style">
+            <div class="input-group">
+                <span class="input-group-addon sort_btn_style">排序</span>
+                <select name="sort_id" class="form-control">
+                    <option value="5" {% if current_sort_id==5 %}selected{% endif %}>申报日期</option>
+                    <option value="2" {% if current_sort_id==2 %}selected{% endif %}>报关状态</option>
+                    <option value="7" {% if current_sort_id==7 %}selected{% endif %}>征免性质</option>
+                </select>
+                <div class="input-group-btn">
+                    {% if current_asc_id==1 %}
+                        <button class="btn btn-primary" name="asc_id" data_code="1" want_code="2">顺序</button>
+                    {% else %}
+                        <button class="btn btn-warning" name="asc_id" data_code="2" want_code="1">逆序</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="form-group search_style">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="提单号 申报日期 报关单号">
+                <div class="input-group-btn">
+                    <button class="btn btn-success search_btn">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>报关单编号</th>
+                <th>提单号</th>
+                <th>贸易种类</th>
+                <th>申报日期</th>
+                <th>申报单位</th>
+                <th>进出口口岸</th>
+                <th>征免性质</th>
+                <th>报关单状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for declaration in declarations %}
+                <tr>
+                    <td>{{ declaration.declaration_code }}</td>
+                    <td>{{ declaration.bl_code }}</td>
+                    <td>
+                        {% if 'Import' in declaration.__class__.__name__ %}
+                            进口
+                        {% else %}
+                            出口
+                        {% endif %}
+                    </td>
+                    <td>{{ declaration.customs_date }}</td>
+                    <td>{{ declaration.customs_company.company_name }}</td>
+                    <td>{{ declaration.import_port or declaration.export_port }}</td>
+                    <td>{{ declaration.tax_mode.name }}</td>
+                    <td>{{ declaration_status(declaration.status_id) }}</td>
+                    <td>
+                        {% if 'Import' in declaration.__class__.__name__ %}
+                            <a  href="{{ url_for('front.front_import_declaration_detail',declaration_uuid=declaration.uuid) }}" class="btn btn-primary btn-xs" >明细</a>
+                        {% else %}
+                            <a  href="{{ url_for('front.front_export_declaration_detail',declaration_uuid=declaration.uuid) }}" class="btn btn-primary btn-xs" >明细</a>
+                        {% endif %}
+                        {% if declaration.status_id==3 %}
+                            {% if 'Import' in declaration.__class__.__name__ %}
+                                <a class="btn btn-warning btn-xs check_btn" href="{{ url_for('front.front_check',trade_type='import',declaration_uuid=declaration.uuid) }}">查验通知书</a>
+                            {% else %}
+                                <a class="btn btn-warning btn-xs check_btn" href="{{ url_for('front.front_check',trade_type='export',declaration_uuid=declaration.uuid) }}">查验通知书</a>
+                            {% endif %}
+                        {% elif declaration.status_id in [4,6,7] %}
+                            {% if 'Import' in declaration.__class__.__name__ %}
+                                <a  href="{{ url_for('front.front_pay_tax',trade_type='import',declaration_uuid=declaration.uuid) }}" class="btn btn-info btn-xs" >缴税明细</a>
+                            {% else %}
+                                <a  href="{{ url_for('front.front_pay_tax',trade_type='export',declaration_uuid=declaration.uuid) }}" class="btn btn-info btn-xs" >缴税明细</a>
+                            {% endif %}
+                        {% elif declaration.status_id==5 %}
+                            <button class="btn btn-danger btn-xs refund_btn" data_declaration_model="{{ declaration.__class__.__name__ }}" data_declaration_uuid="{{ declaration.uuid }}">退单原因</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <div class="pag">
+        <ul class="pagination">
+            {% if current_page>show_page %}
+                <li><a href="{{ url_for('front.front_declaration_status_query',page=1,trade_id=current_trade_id,status_id=current_status_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">首页</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('front.front_declaration_status_query',page=pre_page,trade_id=current_trade_id,status_id=current_status_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">&laquo;</a></li>
+
+            {% for page in page_li %}
+                <li class="{% if current_page==page %}active{% endif %}"><a href="{{ url_for('front.front_declaration_status_query',page=page,trade_id=current_trade_id,status_id=current_status_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">{{ page }}</a></li>
+            {% endfor %}
+
+            <li><span>{{ '共%s页'|format(total_page) }}</span></li>
+
+            <li><a href="{{ url_for('front.front_declaration_status_query',page=next_page,trade_id=current_trade_id,status_id=current_status_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">&raquo;</a></li>
+            {% if current_page<total_page-total_page % show_page %}
+                 <li><a href="{{ url_for('front.front_declaration_status_query',page=total_page,trade_id=current_trade_id,status_id=current_status_id,sort_id=current_sort_id,asc_id=current_asc_id) }}">尾页</a></li>
+             {% endif %}
+
+
+        </ul>
+    </div>
+
+{% endblock %}

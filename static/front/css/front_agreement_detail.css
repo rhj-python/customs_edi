@@ -1,0 +1,30 @@
+h1{
+    margin-bottom: 20px;
+}
+
+.panel_left,.panel_right{
+    width:49%;
+    display: inline-block;
+}
+
+.panel_left{
+   margin-right: 15px;
+}
+
+.panel_right{
+    height: 100%;
+    vertical-align: top;
+    margin-top: 0;
+}
+
+.agreement_style{
+    width:150px;
+}
+
+.middle_btn{
+    text-align: center;
+}
+
+.input_style{
+    width:100%;
+}

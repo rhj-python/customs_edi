@@ -1,0 +1,95 @@
+{% extends 'customs/customs_declaration_base.html' %}
+
+{% block head %}
+    {{ super() }}
+    <script src="{{ static('customs/js/customs_add_import_declaration.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+    新建进口报关单
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block country %}
+    原产国地区
+{% endblock %}
+
+{% block main_declaration %}
+    {% if not current_agreement %}
+            {% if agreements %}
+            <form action="" method="get">
+                <div class="form-group">
+                    <div class="input-group input_style">
+                        <span class="input-group-addon">委托协议编号</span>
+                        <select name="proxy_agreement" class="form-control">
+                            {% for agreement in agreements  %}
+                                <option value="{{ agreement.id }}">{{ agreement.id }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                   <button class="btn btn-info" id="choice_agreement_btn">提交</button>
+                </div>
+            {% else %}
+                <h3 class="alert alert-danger">暂时没有可供填写报关单的协议,请先与客户建立进出口委托协议</h3>
+            {% endif %}
+        </form>
+
+        {% else %}
+            {{ super() }}
+        {% endif %}
+{% endblock %}
+
+{% block port_group %}
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">进口口岸</span>
+            <input type="text" class="form-control" name="import_port" placeholder="必填">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">进口日期</span>
+            <input type="date" class="form-control" name="import_date" value="{{ current_agreement.import_or_export_date }}" placeholder="必填">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">起运国</span>
+            <input type="text" class="form-control" name="departure_country" value="{{ current_agreement.origin_country }}" placeholder="必填">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">装货港</span>
+            <input type="text" class="form-control" name="loading_port" placeholder="必填">
+        </div>
+    </div>
+    <div class="form-group form_style">
+        <div class="input-group input_style">
+            <span class="input-group-addon">境内目的地</span>
+            <input type="text" class="form-control" name="domestic_destination" placeholder="必填">
+        </div>
+    </div>
+    <div class="form-group form_style">
+    <div class="input-group input_style">
+        <span class="input-group-addon">用途</span>
+        <select name="use" class="form-control">
+            {% for use in uses %}
+                <option value="{{ use.id }}">{{ use.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block btn_group %}
+    <button class="btn btn-info" id="save_btn" >保存</button>
+    <button class="btn btn-primary" id="submit_btn" >保存并申报</button>
+    <a href="{{ url_for('customs.customs_import_declaration',page=1,filter_id=0,sort_id=1,asc_id=1) }}" class="btn btn-default" id="cancel_btn">取消</a>
+{% endblock %}

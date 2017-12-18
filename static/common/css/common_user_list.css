@@ -1,0 +1,13 @@
+.online_info{
+    float:right;
+    margin-top:12px;
+    margin-right:10px;
+}
+
+.badge_style{
+    width:30px;
+    height:20px;
+    border-radius: 10px;
+    background:skyblue;
+    color:#fff;
+}

@@ -1,0 +1,70 @@
+{% extends 'front/front_base.html' %}
+
+{% block title %}
+    报关缴税
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('front/css/front_pay_check.css') }}">
+    <script src="{{ static('front/js/front_pay_tax.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <div class="content">
+        <h4><span class="custom_code label label-success">{{ '报关单号: %s'|format(declaration.declaration_code) }}</span></h4>
+        {% if 'Import' in declaration.__class__.__name__ %}
+            <h4><span class="trade_type label label-warning">贸易方式：进口</span></h4>
+        {% else %}
+            <h4><span class="trade_type label label-warning">贸易种类：出口</span></h4>
+        {% endif %}
+        <h4><span class="label label-info">{{ '外汇汇率 %s:人民币 1 : %s' | format(declaration.commoditys[0].currency.name,declaration.commoditys[0].currency.exchange_rate) }}</span></h4>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>总价</th>
+                    <th>币种</th>
+                    <th>税率</th>
+                    <th>税费</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for commodity in declaration.commoditys  %}
+                    <tr>
+                        <td>{{ commodity.commodity_name }}</td>
+                        <td>{{ commodity.total_price }}</td>
+                        <td>{{ commodity.currency.name }}</td>
+                        {% if 'Import' in declaration.__class__.__name__ %}
+                            <td>{{ commodity|tax_rate('import_trade') }}</td>
+                            <td>{{ commodity|tax_price('import_trade') }}</td>
+                        {% else %}
+                            <td>{{ commodity|tax_rate('export_trade') }}</td>
+                            <td>{{ commodity|tax_price('export_trade')|round(2) }}</td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3 class="total_price_h3">
+            {% if declaration.status_id==4 %}
+                <div class="total_price label label-danger label-lg">{{ '需缴税费: %s'|format(declaration.tax_price) }}</div>
+            {% else %}
+                <div class="total_price label label-success label-lg">{{ '已支付: %s'|format(declaration.tax_price) }}</div>
+
+            {% endif %}
+        </h3>
+        <div class="form-group form_style">
+            {% if declaration.status_id==4 %}
+            <button class="btn btn-primary" id="pay_tax_btn" data_declaration_model="{{ declaration.__class__.__name__ }}" data_declaration_uuid="{{ declaration.uuid }}">支付</button>
+
+            {% endif %}
+            <a class="btn btn-default" href="{{ url_for('front.front_declaration_status_query',page=1,trade_id=0,status_id=0,sort_id=5,asc_id=2) }}">返回</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    数据报表
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/themes/sunset.js"></script>
+{#    <script src="https://code.highcharts.com/themes/dark-unica.js"></script>#}
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="http://code.highcharts.com/modules/series-label.js"></script>
+    <script src="http://code.highcharts.com/modules/oldie.js"></script>
+
+
+
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="http://code.highcharts.com/modules/funnel.js"></script>
+    <script src="http://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="http://code.highcharts.com/modules/data.js"></script>
+
+
+    <link rel="stylesheet" href="{{ static('chart/css/chart_index.css') }}">
+    <script src="{{ static('chart/js/chart_index.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <div id="trade_num_chart" class="large_chart"></div>
+    <div id="user_chart" class="middle_chart"></div>
+    <div id="trade_contrast_chart" class="middle_chart r_chart"></div>
+    <div id="budget_spend_chart" class="middle_chart"></div>
+    <div id="message_info_chart" class="middle_chart r_chart"></div>
+
+{% endblock %}

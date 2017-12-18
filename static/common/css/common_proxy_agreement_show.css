@@ -1,0 +1,62 @@
+.check{
+    display: inline-block;
+}
+
+.left_info,.right_info{
+    width:49%;
+    display: inline-block;
+    margin-top:14px;
+}
+
+.left_info{
+    margin-right: 18px;
+}
+
+.addon_style{
+    width:200px;
+}
+
+.input_style{
+    width:100%;
+}
+
+.label_style{
+    margin-right: 8px;
+}
+
+.add_box{
+    width:92%;
+    display: inline-block;
+    text-align: right;
+}
+
+.panel_left,.panel_right{
+    width:49%;
+    display: inline-block;
+}
+
+.panel_left{
+   margin-right: 15px;
+}
+
+.panel_right{
+    height: 689px;
+    vertical-align: top;
+    margin-top: 0;
+}
+
+.agreement_style{
+    width:150px;
+}
+
+.middle_btn{
+    text-align: center;
+}
+
+#agreement_toggle{
+    display: none;
+}
+
+.form_checkbox{
+    height: 100%;
+}

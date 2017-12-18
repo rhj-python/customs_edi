@@ -1,0 +1,12 @@
+.account_info>a{
+    display: inline-block;
+    width:48%;
+}
+
+.regist{
+    text-align: left;
+}
+
+.forget{
+    text-align: right;
+}

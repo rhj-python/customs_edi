@@ -1,0 +1,34 @@
+{% extends 'front/front_proxy_base.html' %}
+
+{% block title %}
+    委托书详情
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block business_group %}
+    {% for content in business_contents %}
+        <label for="" class="label_style">
+            {% if content in proxy.contents %}
+                 <input type="checkbox" name="contents" value="{{ content.id }}" checked disabled>{{ content.name }}
+            {% else %}
+                <input type="checkbox" name="contents" value="{{ content.id }}" disabled>{{ content.name }}
+            {% endif %}
+
+        </label>
+    {% endfor %}
+{% endblock %}
+
+{% block expiry_time %}
+    <input type="text" name="expiry_time" value="{{ proxy.expiry_time }}" class="form-control" readonly>
+{% endblock %}
+
+{% block submit_proxy_group %}
+
+{% endblock %}

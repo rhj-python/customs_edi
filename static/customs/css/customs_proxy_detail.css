@@ -1,0 +1,28 @@
+.add_box{
+    display: inline-block;
+    min-width:84%;
+    text-align: right;
+}
+
+.search_style{
+    display: inline-block;
+    width:40%;
+    float:left;
+}
+
+.filter_style{
+    display: inline-block;
+    width:30%;
+    float:left;
+    margin-right:8px;
+
+}
+
+.filter_btn{
+    background-color:#f0ad4e;
+    color:#fff;
+}
+
+.form-group{
+    margin-bottom: 0;
+}

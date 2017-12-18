@@ -1,0 +1,23 @@
+{% extends 'ws/ws_msg_base.html' %}
+{% from 'common/common_ws_macro.html' import user_list %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ static('common/css/common_user_list.css') }}">
+    <script src="{{ static('ws/js/ws_msg_single.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="main_m">
+        {% if employee %}
+            {{ user_list('企业内部联系人',employees,g.employee,'panel-success',online_set) }}
+            {{ user_list('海关联系人',customs_users,g.employee,'panel-primary',online_set) }}
+            {{ user_list('客户',front_users,g.employee,'panel-info',online_set) }}
+        {% else %}
+            {{ user_list('企业内部联系人',employees,g.customs_user,'panel-success',online_set) }}
+            {{ user_list('海关联系人',customs_users,g.customs_user,'panel-primary',online_set) }}
+            {{ user_list('客户',front_users,g.customs_user,'panel-info',online_set) }}
+
+        {% endif %}
+       </div>
+{% endblock %}

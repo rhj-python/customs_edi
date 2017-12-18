@@ -1,0 +1,61 @@
+{% extends 'customs/customs_base.html' %}
+
+{% block title %}
+    新增员工
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('manage/css/manage_add_employee.css') }}">
+    <script src="{{ static('manage/js/manage_add_employee.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <form action="" class="form form_middle" method="post">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-user"></span>
+                <input type="text" class="form-control" name="username" placeholder="用户名">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-envelope"></span>
+                <input type="email" class="form-control" name="email" placeholder="邮箱">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                <input type="password" class="form-control" name="password" placeholder="密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-repeat"></span>
+                <input type="password" class="form-control" name="password_repeat" placeholder="确认密码">
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">职位</span>
+                <div class="form-control checkbox_div">
+                    {% for role in roles %}
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="roles" value="{{ role.id }}">{{ role.name }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <button class="btn btn-primary add_btn">立即新增</button>
+            <a class="btn btn-default" href="{{ url_for('customs.manage_employee_manage') }}">返回</a>
+        </div>
+    </form>
+{% endblock %}

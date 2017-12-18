@@ -1,0 +1,24 @@
+{% extends 'front/front_base.html' %}
+
+{% block title %}
+    即时通讯
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+        <link rel="stylesheet" href="{{ static('common/css/common_msg_base.css') }}">
+    <script src="{{ static('front/js/front_msg_base.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <ul class="nav nav-tabs" id="nav_tabs">
+        <li><a href="{{ url_for('front.front_msg_single') }}">联系人</a></li>
+        <li><a href="{{ url_for('front.front_msg_group') }}">群聊</a></li>
+    </ul>
+    {% block main %}
+
+    {% endblock %}
+{% endblock %}

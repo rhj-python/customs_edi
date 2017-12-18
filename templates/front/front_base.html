@@ -1,0 +1,83 @@
+{% from 'common/common_macro.html' import static %}
+{% from 'common/common_ws_macro.html' import chat_message_left %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}自动报关系统-用户版{% endblock %}
+    </title>
+    {% include 'common/common_include.html' %}
+
+    <link rel="stylesheet" href="{{ static('front/css/front_base.css') }}">
+    <link rel="stylesheet" href="{{ static('common/css/common_right_base.css') }}">
+    <link rel="stylesheet" href="{{ static('common/css/common_msg_detail.css') }}">
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script src="{{ static('front/js/front_base.js') }}"></script>
+    <script src="{{ static('common/js/common_right_base.js') }}"></script>
+
+    {% block head %}
+
+    {% endblock %}
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="navbar navbar-inverse navbar-fixed-top navbar_blue">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a href="" class="navbar-brand">自动报关系统(用户版)</a>
+                </div>
+                <div class="collpase navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="triple_agreement"><a href="{{ url_for('front.front_triple_agreement') }}">三方协议</a></li>
+                        <li class="entrust_approval"><a href="{{ url_for('front.front_entrust_approval') }}">委托报关</a></li>
+                        <li class="declaration_status_query"><a href="{{ url_for('front.front_declaration_status_query',page=1,trade_id=0,status_id=0,sort_id=5,asc_id=2) }}">报关状态查询</a></li>
+                        <li class="msg"><a href="{{ url_for('front.front_msg_single') }}">即时通讯</a></li>
+{#                        <li class="account_manage"><a>账号管理</a></li>#}
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if not front_user %}
+                            <li><a href="{{ url_for('front_account.front_login') }}">登录</a></li>
+                            <li><a href="{{ url_for('front_account.front_regist') }}">注册</a></li>
+                        {% else %}
+                            <li id="user_info" style="display:none" data_id="{{ front_user.id }}" data_model="{{ front_user.__class__.__name__ }}"></li>
+                            <li><a href="" class="front_user" id="sender_name">{{ front_user.username }}</a></li>
+                            <li><a href="{{ url_for('front_account.front_logout') }}">注销</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% block body %}
+            <div class="main_content">
+                <h1>{% block page_title %}{% endblock %}</h1>
+                {% block main_content %}
+
+                {% endblock %}
+            </div>
+            <div class="panel panel-primary panel_grape mp_grape">
+                <div class="panel-heading">所有人广播
+                    <span class="glyphicon glyphicon-minus" id="gly_minus"></span>
+                </div>
+                <div class="panel-body">
+                    <div class="r_message">
+                        {% for message in msg_alls[::-1] %}
+                            {{ chat_message_left(message) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div id="mp_broadcast">
+                <span class="glyphicon glyphicon-comment" id="mp_icon"></span>
+            </div>
+        {% endblock %}
+    </div>
+
+	
+	
+
+
+
+	
+</body>
+</html>

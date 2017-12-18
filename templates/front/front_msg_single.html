@@ -1,0 +1,14 @@
+{% extends 'front/front_msg_base.html' %}
+{% from 'common/common_ws_macro.html' import front_user_list %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ static('common/css/common_user_list.css') }}">
+    <script href="{{ static('front/js/front_msg_single.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="main_m">
+        {{ front_user_list('报关行联系人',employees,front_user,'panel-info',online_set) }}
+   </div>
+{% endblock %}

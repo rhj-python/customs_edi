@@ -1,0 +1,48 @@
+{% extends 'front/front_base.html' %}
+
+{% block title %}
+    查验通知书
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('front/css/front_check.css') }}">
+{% endblock %}
+
+{% block main_content %}
+    <div class="check_wp">
+        <div class="title">{{ '报关单编号:%s'|format(declaration.declaration_code) }}</div>
+        <div class="second_title">{{ '%s:'|format(declaration.business_company.company_name) }}</div>
+
+        <div class="main">
+            <div class="main_c">
+                你单位于 {{ declaration.customs_date }} 所申报货物,经审核决定实施查验,请联系港务等想过部门作好准备,
+                于 {{ declaration.check_date }} 配合海关查验。
+            </div>
+            <div class="middle">特此通知</div>
+            <div class="info">
+                <span>运输方式 {{ declaration.transport_mode.name }}</span>
+                <span>提单号 {{ declaration.bl_code }}</span>
+                <span>申报毛重(KG) {{ declaration.gross_weight }}</span>
+                <span>申报净重(KG): {{ declaration.net_weight }}</span>
+            </div>
+            <div class="commodity">
+                {% for commodity in declaration.commoditys %}
+                    <div class="com_in">
+                        <span>{{ '商品编号: %s'|format(commodity.hs_code) }}</span>
+                        <span>{{ '商品名称: %s'|format(commodity.commodity_name) }}</span>
+                        <span>{{ '数量单位: %s'|format(commodity.quantity_and_unit) }}</span>
+                        <span>{{ '总值: %s %s'|format(commodity.total_price,commodity.currency.name) }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="telephone">联系电话:</div>
+            <div class="customs_user">经办官员:</div>
+            <div class="sign_name">签收人:</div>
+        </div>
+    </div>
+
+{% endblock %}

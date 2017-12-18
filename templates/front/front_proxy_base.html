@@ -1,0 +1,149 @@
+{% extends 'front/front_base.html' %}
+{% from 'common/common_macro.html' import proxy_agreement_list,proxy_agreement_operate %}
+
+{% block title %}
+    建立委托书
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static('common/css/common_proxy_agreement_show.css') }}">
+    <script src="{{ static('front/js/front_proxy_base.js') }}"></script>
+
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="main">
+        <div class="title_agreement">
+            我单位现 长期 委托贵公司代理等通关事宜。（<div class="checkbox check">
+                {% block business_group %}
+                    {% for content in business_contents %}
+                        <label for="" class="label_style">
+                            {% if content.id in current_contents %}
+                                 <input type="checkbox" name="contents" value="{{ content.id }}" checked {% if content.id==1 %}checked disabled{% endif %} >{{ content.name }}
+                            {% else %}
+                                <input type="checkbox" name="contents" value="{{ content.id }}" {% if content.id==1 %}checked disabled{% endif %} >{{ content.name }}
+                            {% endif %}
+
+                        </label>
+                    {% endfor %}
+                {% endblock %}
+
+            </div>）详见《委托报关协议》。
+            <div>
+                我单位保证遵守《海关法》和国家有关法规，保证所提供的情况真实、完整、单货相符。否则，愿承担相关法律责任。
+            </div>
+        </div>
+
+        <div class="proxy_info">
+            <div class="left_info">
+                <div class="panel panel-info">
+                    <div class="panel-heading">委托方信息</div>
+                    <div class="panel-body">
+                        <form action="" class="form" method="post">
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">委托方组织机构代码</span>
+                                    <input type="text" name="business_organization_code" class="form-control" value="{{ business_company.organization_code }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">委托方企业海关编码</span>
+                                    <input type="text" name="business_customs_registration_code" class="form-control" value="{{ business_company.customs_registration_code }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">委托方企业名称</span>
+                                    <input type="text" name="business_company_name" class="form-control" value="{{ business_company.company_name }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">法人代表授权签署人</span>
+                                    <input type="text" name="business_legal_name" class="form-control" value="{{ business_company.legal_name }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">委托协议份数</span>
+                                    <input type="text" name="business_proxy_count" class="form-control" value="{{ proxy.import_agreements.count()+proxy.export_agreements.count() }}" readonly>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="right_info">
+                <div class="panel panel-info">
+                    <div class="panel-heading">被委托方信息</div>
+                    <div class="panel-body">
+                        <form action="" class="form" method="post">
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">被委托方组织机构代码</span>
+                                    <input type="text" name="customs_organization_code" class="form-control" value="{{ customs_company.organization_code }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">被委托方企业海关编码</span>
+                                    <input type="text" name="customs_customs_registration_code" class="form-control" value="{{ customs_company.customs_registration_code }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">被委托方企业名称</span>
+                                    <input type="text" name="customs_company_name" class="form-control" value="{{ customs_company.company_name }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">法人代表授权签署人</span>
+                                    <input type="text" name="customs_legal_name" class="form-control" value="{{ customs_company.legal_name }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon addon_style">委托书有效期</span>
+                                    {% block expiry_time %}
+                                        <select name="expiry_time_id" class="form-control">
+
+                                            <option value="1" {% if current_expiry_time==1 %}selected{% endif %}>3个月</option>
+                                            <option value="2" {% if current_expiry_time==2 %}selected{% endif %}>6个月</option>
+                                            <option value="3" {% if current_expiry_time==3 %}selected{% endif %}>12个月</option>
+                                        </select>
+                                    {% endblock %}
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ proxy_agreement_list(proxy=proxy) }}
+
+        {{ proxy_agreement_operate(proxy=proxy,trade_modes=trade_modes,pay_modes=pay_modes,document_types=document_types) }}
+
+        {% block submit_proxy_group %}
+            <div class="form-group">
+                <div class="middle_btn">
+                    {% if not proxy.import_agreements and not proxy_export_agreements %}
+                        <p class="alert alert-warning">至少新增1个委托协议,才可发起申请</p>
+                        <button class="btn btn-primary" id="submit_proxy_btn" data_proxy_id="{{ proxy.id }}" disabled>发起申请</button>
+                    {% else %}
+                        <button class="btn btn-primary" id="submit_proxy_btn" data_proxy_id="{{ proxy.id }}">发起申请</button>
+                    {% endif %}
+                    <button class="btn btn-default" id="cancel_proxy_btn" data_proxy_id="{{ proxy.id }}">取消申请</button>
+                </div>
+            </div>
+        {% endblock %}
+
+    </div>
+{% endblock %}

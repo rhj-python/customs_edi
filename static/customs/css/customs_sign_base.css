@@ -1,0 +1,24 @@
+.form_min{
+    width:300px;
+    margin:100px auto;
+}
+
+.glyphicon{
+    top:0;
+}
+
+.form-horizontal .checkbox{
+    padding: 0;
+
+}
+
+.remember_box{
+    display: inline-block;
+    width:100px;
+    padding-bottom: 10px;
+}
+
+.forget{
+    float:right;
+}
+

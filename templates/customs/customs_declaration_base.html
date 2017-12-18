@@ -1,0 +1,618 @@
+{% extends 'customs/customs_base.html' %}
+{% from 'common/common_macro.html' import commodity_group,document_group %}
+
+{% block title %}
+    新建进口报关单
+{% endblock %}
+
+{% block head %}
+    {% include 'common/common_qiniu.html' %}
+
+    <link rel="stylesheet" href="{{ static('customs/css/customs_declaration_base.css') }}">
+    <script src="{{ static('customs/js/customs_declaration_base.js') }}"></script>
+    <script type="text/html" id="commodity_group">
+        {{ commodity_group(currencys,tax_free_modes) }}
+    </script>
+    <script type="text/html" id="document_group">
+        {{ document_group(document_types) }}
+    </script>
+
+{% endblock %}
+
+{% block page_title %}
+    {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="panel panel-info main_panel">
+        <div class="panel-heading">报关单</div>
+        <div class="panel-body">
+            {% block main_declaration %}
+                <form action="" class="form" method="post">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">主要信息</div>
+                        <div class="panel-body">
+                        {% if not declaration %}
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">报关单编号</span>
+                                        <input type="text" name="declaration_code" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">预录入编号</span>
+                                        <input type="text" name="pre_entry_code" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">委托协议编号</span>
+                                        <select name="agreement_id" class="form-control" disabled>
+                                            {% for agreement in agreements %}
+                                                <option value="{{ agreement.id }}" {% if agreement.id==current_agreement.id %}selected{% endif %}>{{ agreement.id }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">申报日期</span>
+                                        <input type="date" name="customs_date" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">备案号</span>
+                                        <input type="text" name="case_code" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">合同协议号</span>
+                                        <input type="text" name="contract_code" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">经营单位</span>
+                                        <input type="text" name="business_company" class="form-control" placeholder="必填" value="{{ current_agreement.proxy.client.company_name }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">收货单位</span>
+                                        <input type="text" name="consignee" class="form-control" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">申报单位</span>
+                                        <input type="text" name="customs_company" class="form-control" value="{{ current_agreement.proxy.broker.company_name }}" placeholder="必填" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">运输方式</span>
+                                        <select name="transport_mode" class="form-control">
+                                            {% for mode in transport_modes  %}
+                                                <option value="{{ mode.id }}" {% if mode==current_agreement.mode %}selected{% endif %}>{{ mode.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">运输工具名称</span>
+                                        <input type="text" class="form-control" name="vessel_name" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">航次号</span>
+                                        <input type="text" class="form-control" name="vessel_code">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">提运单号</span>
+                                        <input type="text" class="form-control" name="bl_code" value="{{ current_agreement.bl_code }}" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">贸易方式</span>
+                                        <select name="trade_mode" class="form-control">
+                                            {% for mode in trade_modes %}
+                                                <option value="{{ mode.id }}" {% if mode==current_agreement.mode %}selected{% endif %}>{{ mode.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">征免性质</span>
+                                        <select name="tax_mode" class="form-control">
+                                            {% for mode in tax_modes %}
+                                                <option value="{{ mode.id }}">{{ mode.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">征税比例</span>
+                                        <input type="text" class="form-control" name="tax_rate">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">许可证号</span>
+                                        <input type="text" class="form-control" name="license_code">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">批准文号</span>
+                                        <input type="text" class="form-control" name="approval_code">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">成交方式</span>
+                                        <select name="transaction_mode" class="form-control">
+                                            {% for mode in transaction_modes  %}
+                                                <option value="{{ mode.id }}">{{ mode.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">运费/率</span>
+                                        <input type="text" class="form-control" name="freight">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">保费/率</span>
+                                        <input type="text" class="form-control" name="insurance_premiums">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">杂费/率</span>
+                                        <input type="text" class="form-control" name="sundry_charges">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">包装数量</span>
+                                        <input type="text" class="form-control" name="packages_num" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">包装种类</span>
+                                        <input type="text" class="form-control" name="packing_type" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">毛重(kg)</span>
+                                        <input type="text" class="form-control" name="gross_weight" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">净重(kg)</span>
+                                        <input type="text" class="form-control" name="net_weight" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">集装箱号</span>
+                                        <input type="text" class="form-control" name="container_code">
+                                    </div>
+                                </div>
+                                <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">标记唛码及备注</span>
+                                        <textarea class="form-control" name="marks" placeholder="内容不超过200个字符"></textarea>
+                                    </div>
+                                </div>
+
+                                <br>
+                        {% else %}
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">报关单编号</span>
+                                    <input type="text" name="declaration_code" class="form-control" value="{{ declaration.declaration_code }}" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">预录入编号</span>
+                                    <input type="text" name="pre_entry_code" class="form-control" value="{{ declaration.pre_entry_code }}" placeholder="必填">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">委托协议编号</span>
+                                    <select name="agreement_id" class="form-control" disabled>
+                                        {% for agreement in agreements %}
+                                            <option value="{{ agreement.id }}" {% if agreement==declaration.agreement %}selected{% endif %}>{{ agreement.id }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">申报日期</span>
+                                    <input type="date" name="customs_date" class="form-control" value="{{ declaration.customs_date }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">备案号</span>
+                                    <input type="text" name="case_code" class="form-control" value="{{ declaration.case_code }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">合同协议号</span>
+                                    <input type="text" name="contract_code" class="form-control" value="{{ declaration.contract_code }}" placeholder="必填">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">经营单位</span>
+                                    <input type="text" name="bsuiness_company" class="form-control" placeholder="必填" value="{{ declaration.business_company.company_name }}" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">收货单位</span>
+                                    <input type="text" name="consignee" class="form-control" placeholder="必填" value="{{ declaration.consignee }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">申报单位</span>
+                                    <input type="text" name="customs_company" class="form-control" value="{{ declaration.customs_company.company_name }}" placeholder="必填" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">运输方式</span>
+                                    <select name="transport_mode" class="form-control">
+                                        {% for mode in transport_modes  %}
+                                            <option value="{{ mode.id }}" {% if mode==declaration.transport_mode %}selected{% endif %}>{{ mode.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">运输工具名称</span>
+                                    <input type="text" class="form-control" name="vessel_name" placeholder="必填" value="{{ declaration.vessel_name }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">航次号</span>
+                                    <input type="text" class="form-control" name="vessel_code" value="{{ declaration.code }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">提运单号</span>
+                                    <input type="text" class="form-control" name="bl_code" value="{{ declaration.bl_code }}" placeholder="必填">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">贸易方式</span>
+                                    <select name="trade_mode" class="form-control">
+                                        {% for mode in trade_modes %}
+                                            <option value="{{ mode.id }}" {% if mode==declaration.trade_mode %}selected{% endif %}>{{ mode.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">征免性质</span>
+                                    <select name="tax_mode" class="form-control">
+                                        {% for mode in tax_modes %}
+                                            <option value="{{ mode.id }}" {% if mode==declaration.tax_mode %}selected{% endif %}>{{ mode.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">征税比例</span>
+                                    <input type="text" class="form-control" name="tax_rate" value="{{ declaration.tax_rate }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">许可证号</span>
+                                    <input type="text" class="form-control" name="license_code" value="{{ declaration.license_code }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">批准文号</span>
+                                    <input type="text" class="form-control" name="approval_code" value="{{ declaration.approval_code }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">成交方式</span>
+                                    <select name="transaction_mode" class="form-control">
+                                        {% for mode in transaction_modes  %}
+                                            <option value="{{ mode.id }}" {% if mode==declaration.transaction_mode %}selected{% endif %}>{{ mode.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">运费/率</span>
+                                    <input type="text" class="form-control" name="freight" value="{{ declaration.freight }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">保费/率</span>
+                                    <input type="text" class="form-control" name="insurance_premiums" value="{{ declaration.insurance_premiums }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">杂费/率</span>
+                                    <input type="text" class="form-control" name="sundry_charges" value="{{ declaration.sundry_charges }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">包装数量</span>
+                                    <input type="text" class="form-control" name="packages_num" placeholder="必填" value="{{ declaration.packages_num }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">包装种类</span>
+                                    <input type="text" class="form-control" name="packing_type" placeholder="必填" value="{{ declaration.packing_type }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">毛重(kg)</span>
+                                    <input type="text" class="form-control" name="gross_weight" placeholder="必填" value="{{ declaration.gross_weight }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">净重(kg)</span>
+                                    <input type="text" class="form-control" name="net_weight" placeholder="必填" value="{{ declaration.net_weight }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                <div class="input-group input_style">
+                                    <span class="input-group-addon">集装箱号</span>
+                                    <input type="text" class="form-control" name="container_code" value="{{ declaration.container_code }}">
+                                </div>
+                            </div>
+                            <div class="form-group form_style">
+                                    <div class="input-group input_style">
+                                        <span class="input-group-addon">标记唛码及备注</span>
+                                        <textarea class="form-control" name="marks">{{ declaration.marks }}</textarea>
+                                    </div>
+                                </div>
+
+                        {% endif %}
+                        {% block port_group %}
+
+                        {% endblock %}
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">货物信息
+                            <span id="add_commodity_btn" class="glyphicon glyphicon-plus plus_style"></span>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>项号</th>
+                                    <th>商品编号</th>
+                                    <th>商品名称</th>
+                                    <th>规格型号</th>
+                                    <th>数量及单位</th>
+                                    <th>
+                                        {% block country %}
+                                            原产国地区
+                                        {% endblock %}
+                                    </th>
+                                    <th>单价</th>
+                                    <th>总价</th>
+                                    <th>币制</th>
+                                    <th>征免</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="commodity_tbody">
+                                {% if not declaration %}
+                                    <tr class="commodity_tr">
+                                        <td class="item_code">
+                                            <input type="text" name="item_code" class="form-control" value="1">
+                                        </td>
+                                        <td class="hs_code">
+                                            <input type="text" name="hs_code" class="form-control" value="{{ current_agreement.hs_code }}">
+                                        </td>
+                                        <td class="commodity_name">
+                                            <input type="text" name="commodity_name" class="form-control" value="{{ current_agreement.goods_name }}">
+                                        </td>
+                                        <td class="commodity_type">
+                                            <input type="text" name="commodity_type" class="form-control" value="">
+                                        </td>
+                                        <td class="quantity_and_unit">
+                                            <input type="text" name="quantity_and_unit" class="form-control" value="">
+                                        </td>
+                                        <td class="country">
+                                            <input type="text" name="country" class="form-control" value="{{ current_agreement.origin_country or current_agreement.destination_country }}">
+                                        </td>
+                                        <td class="unit_price">
+                                            <input type="text" name="unit_price" class="form-control" value="">
+                                        </td>
+                                        <td class="total_price">
+                                            <input type="text" name="total_price" class="form-control" value="{{ current_agreement.total_price }}">
+                                        </td>
+                                        <td>
+                                            <select name="currency" class="form-control">
+                                                {% for currency in currencys  %}
+                                                    {% if current_currency==currency %}
+                                                        <option value="{{ currency.id }}" selected>{{ currency.name }}</option>
+                                                    {% else %}
+                                                        <option value="{{ currency.id }}">{{ currency.name }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="tax_free_mode" class="form-control">
+                                                {% for tax_free_mode in tax_free_modes  %}
+                                                    {% if current_tax_free_mode==tax_free_mode %}
+                                                        <option value="{{ tax_free_mode.id }}" selected>{{ tax_free_mode.name }}</option>
+                                                    {% else %}
+                                                        <option value="{{ tax_free_mode.id }}">{{ tax_free_mode.name }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td class="operate">
+                                            <span class="glyphicon glyphicon-remove remove_style remove_commodity_btn"></span>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    {% for commodity in declaration.commoditys %}
+                                        <tr class="commodity_tr">
+                                            <td class="item_code">
+                                                <input type="text" class="form-control" name="item_code" value="{{ commodity.item_code }}">
+                                            </td>
+                                            <td class="hs_code">
+                                                <input type="text" class="form-control" name="hs_code" value="{{ commodity.hs_code }}">
+                                            </td>
+                                            <td class="commodity_name">
+                                                <input type="text" class="form-control" name="commodity_name" value="{{ commodity.commodity_name }}">
+                                            </td>
+                                            <td class="commodity_type">
+                                                <input type="text" class="form-control" name="commodity_type" value="{{ commodity.commodity_type }}">
+                                            </td>
+                                            <td class="quantity_and_unit">
+                                                <input type="text" class="form-control" name="quantity_and_unit" value="{{ commodity.quantity_and_unit }}">
+                                            </td>
+                                            <td class="country">
+                                                <input type="text" class="form-control" name="country" value="{{ commodity.country }}">
+                                            </td>
+                                            <td class="unit_price">
+                                                <input type="text" class="form-control" name="unit_price" value="{{ commodity.unit_price }}">
+                                            </td>
+                                            <td class="total_price">
+                                                <input type="text" class="form-control" name="total_price" value="{{ commodity.total_price }}">
+                                            </td>
+                                            <td>
+                                                <select name="currency" class="form-control">
+                                                    {% for currency in currencys  %}
+                                                        {% if current_currency==currency %}
+                                                            <option value="{{ currency.id }}" selected>{{ currency.name }}</option>
+                                                        {% else %}
+                                                            <option value="{{ currency.id }}">{{ currency.name }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="tax_free_mode" class="form-control">
+                                                    {% for tax_free_mode in tax_free_modes  %}
+                                                        {% if current_tax_free_mode==tax_free_mode %}
+                                                            <option value="{{ tax_free_mode.id }}" selected>{{ tax_free_mode.name }}</option>
+                                                        {% else %}
+                                                            <option value="{{ tax_free_mode.id }}">{{ tax_free_mode.name }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                            <td class="operate">
+                                                <span class="glyphicon glyphicon-remove remove_style remove_commodity_btn"></span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">随附单据
+                            <span class="glyphicon glyphicon-plus plus_style" id="add_document_btn"></span>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>单据类型</th>
+                                    <th>单据名称</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="document_tbody">
+                                {% if declaration %}
+                                    {% for document in declaration.documents %}
+                                        <tr class="document_tr">
+                                            <td class="document_type_td">
+                                                <select name="document_type" class="form-control">
+                                                    {% for type in document_types %}
+                                                        <option value="{{ type.id }}" {% if type in document.document_types %}selected{% endif %}>{{ type.name }}</option>
+                                                    {% endfor %}
+
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" name="document_name" value="{{ document.name }}">
+                                            </td>
+                                            <td>
+                                                <span class="label label-success">上传成功</span>
+                                            </td>
+                                            <td class="document_operate_td">
+                                                <button class="btn btn-primary upload_btn" data_btn="">上传</button>
+                                                <a href="{{ document.url }}" target="_blank" class="btn btn-info preview_btn" style="display: inline-block">预览</a>
+                                                <button class="btn btn-danger remove_document_btn">删除</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group btn_group">
+                        {% block btn_group %}
+
+                        {% endblock %}
+                    </div>
+                </form>
+            {% endblock %}
+
+        </div>
+    </div>
+
+{% endblock %}
