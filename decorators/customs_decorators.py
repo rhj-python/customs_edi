@@ -35,11 +35,11 @@ def permission_required(type,p_code):
     def outer(func):
         @wraps(func)
         def wrapper(*args,**kwargs):
-            print '-'*30
-            print g.employee
-            print '-'*30
-            has_permission=Permission_Handler.has_permission(g.employee,type,p_code)
-            return func(*args,**kwargs) if has_permission else abort(401)
+            if hasattr(g,'employee'):
+                has_permission=Permission_Handler.has_permission(g.employee,type,p_code)
+                return func(*args,**kwargs) if has_permission else abort(401)
+            else:
+                abort(401)
         return wrapper
     return outer
 
