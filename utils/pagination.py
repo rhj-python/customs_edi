@@ -1,6 +1,5 @@
 # coding:utf-8
 
-
 def pagination(current_page,total_num,sing_page_num,show_page):
     current_page=int(current_page)
 
